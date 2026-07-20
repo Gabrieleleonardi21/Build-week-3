@@ -2,8 +2,7 @@
 // Lettura in tempo reale (onValue) + scrittura (post, commenti, like, condivisioni)
 // e condivisione immagini. randomuser.me serve solo a generare i dati iniziali.
 import { ref, push, set, update, remove, get, onValue, runTransaction } from 'firebase/database'
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { db, storage } from './firebase'
+import { db } from './firebase'
 import {
   HEADLINES,
   POST_TEXTS,
@@ -220,9 +219,9 @@ export async function sharePost(postId) {
   })
 }
 
-// ---------- Immagini (Firebase Storage) ----------
+// ---------- Immagini (data URL nel Realtime Database) ----------
 
-// Vincoli sulle immagini condivise: solo JPEG/PNG e sempre sotto i 30 MB.
+// Vincoli sull'immagine di input: solo JPEG/PNG e sempre sotto i 30 MB.
 export const MAX_IMAGE_BYTES = 30 * 1024 * 1024 // 30 MB
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png']
 
@@ -236,13 +235,38 @@ export function validateImageFile(file) {
   }
 }
 
-// Carica il file su Firebase Storage e ritorna l'URL di download.
-// Nel DB salviamo solo questo URL (leggero), non i byte dell'immagine.
-export async function uploadImage(file) {
-  if (!storage) throw new Error('Storage non configurato')
-  validateImageFile(file)
-  const path = `post-images/${clientId()}/${Date.now()}-${file.name}`
-  const node = storageRef(storage, path)
-  await uploadBytes(node, file)
-  return getDownloadURL(node)
+// Valida, ridimensiona (via canvas) e ricomprime l'immagine in un data URL JPEG.
+// Il Realtime Database non è pensato per file grandi: qui salviamo una versione
+// compatta (lato massimo `maxSize`px) per non appesantire il DB.
+export function processImage(file, maxSize = 1080, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    try {
+      validateImageFile(file)
+    } catch (err) {
+      reject(err)
+      return
+    }
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      let { width, height } = img
+      // riduce mantenendo le proporzioni se supera il lato massimo
+      if (width > maxSize || height > maxSize) {
+        const ratio = Math.min(maxSize / width, maxSize / height)
+        width = Math.round(width * ratio)
+        height = Math.round(height * ratio)
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      reject(new Error('Immagine non leggibile'))
+    }
+    img.src = url
+  })
 }
