@@ -11,28 +11,29 @@ function Header() {
 
   return (
     <>
-      <Container
-        fluid
-        className="headerNav border-bottom d-flex align-items-center justify-content-around"
-      >
-        <div
-          className={
-            ricercaAperta
-              ? "d-flex align-items-center flex-grow-1 minWidth0"
-              : "d-flex align-items-center"
-          }
-        >
-          {/* fino a md il logo lascia spazio al campo di ricerca aperto */}
-          <div className={ricercaAperta ? "d-none d-md-block" : ""}>
-            <Logo />
+      {/* la barra bianca resta a tutta larghezza, il Container interno
+          allinea il contenuto a quello della pagina */}
+      <div className="headerNav border-bottom">
+        <Container className="d-flex align-items-center justify-content-between">
+          <div
+            className={
+              ricercaAperta
+                ? "d-flex align-items-center flex-grow-1 minWidth0"
+                : "d-flex align-items-center"
+            }
+          >
+            {/* fino a lg il logo lascia spazio al campo di ricerca aperto */}
+            <div className={ricercaAperta ? "d-none d-lg-block" : ""}>
+              <Logo />
+            </div>
+            <Search aperta={ricercaAperta} onToggle={setRicercaAperta} />
           </div>
-          <Search aperta={ricercaAperta} onToggle={setRicercaAperta} />
-        </div>
-        <div className="d-flex align-items-center flex-shrink-0">
-          <Icon />
-          <Menu />
-        </div>
-      </Container>
+          <div className="d-flex align-items-center flex-shrink-0">
+            <Icon />
+            <Menu />
+          </div>
+        </Container>
+      </div>
     </>
   );
 }

@@ -9,6 +9,7 @@
     max-width: 260px;
     margin-left: 10px;
     height: 35px;
+    padding-left: 12px;
 }
 
 .icon {
@@ -19,11 +20,17 @@
     opacity: 0.65;
     text-decoration: none;
     font-size: 12px;
-
+    /* bordo trasparente: la voce attiva lo colora senza spostare il layout */
+    border-bottom: 2px solid transparent;
 }
 
 .iconContainer:hover {
     opacity: 1;
+}
+
+.iconAttiva {
+    opacity: 1;
+    border-bottom-color: black;
 }
 
 p {
@@ -64,8 +71,8 @@ a {
     background-color: #f3f2ef;
 }
 
-/* Fino a md il campo di ricerca resta chiuso: si vede solo la lente */
-@media (max-width: 767.98px) {
+/* Fino a lg il campo di ricerca resta chiuso: si vede solo la lente */
+@media (max-width: 991.98px) {
     #search {
         display: none;
     }
@@ -102,6 +109,22 @@ a {
     top: 0;
     z-index: 1020;
     background-color: #fff;
+}
+
+/* Fino a md i dropdown dell'header (Tu / Per le aziende) si aprono al centro
+   dello schermo invece che ancorati al toggle: cosi' non escono di lato.
+   Popper scrive position/inset/transform inline, per questo servono gli
+   !important e l'azzeramento di inset prima di top/left. */
+@media (max-width: 767.98px) {
+    .dropdownCentrato.dropdown-menu {
+        position: fixed !important;
+        inset: auto !important;
+        transform: translateX(-50%) !important;
+        top: 56px !important;
+        left: 50% !important;
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+    }
 }
 
 /* Barra di navigazione in basso, stile Instagram su iPhone:

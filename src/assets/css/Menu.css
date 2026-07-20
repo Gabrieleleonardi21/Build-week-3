@@ -17,6 +17,24 @@
     padding: 12px 20px;
 }
 
+/* sotto i 768px il menu a 640px usciva dallo schermo: lo si stringe alla
+   larghezza della finestra e si impilano le due colonne */
+@media (max-width: 767.98px) {
+    .aziendeMenu {
+        width: calc(100vw - 16px);
+        max-width: 640px;
+    }
+
+    .aziendeMenu-righe {
+        flex-direction: column;
+    }
+
+    .aziendeMenu-col--sx {
+        border-right: 0;
+        border-bottom: 1px solid rgb(0 0 0 / 0.12);
+    }
+}
+
 /* la linea verticale che separa le due colonne */
 .aziendeMenu-col--sx {
     border-right: 1px solid rgb(0 0 0 / 0.12);

@@ -1,13 +1,7 @@
+import NavIcon from "./NavIcon";
+
 function NotificationIcon () {
-    return (
-        <a
-          href="#"
-          className="px-2 px-lg-3 d-flex flex-column align-items-center iconContainer"
-        >
-          <img src="bell-fill.svg" alt="notifica" className="icon" />
-          <p className="p-0 m-0">Notifica</p>
-        </a>
-    )
+    return <NavIcon id="notifica" src="bell-fill.svg" alt="notifica" testo="Notifica" />
 }
 
 export default NotificationIcon

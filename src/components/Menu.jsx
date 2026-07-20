@@ -89,8 +89,8 @@ function Menu() {
     <div className="d-flex border-start py-2">
       <Dropdown align="end">
         <Dropdown.Toggle as={MenuToggle} id="menu-aziende" />
-        <Dropdown.Menu className="aziendeMenu">
-          <div className="d-flex">
+        <Dropdown.Menu className="aziendeMenu dropdownCentrato">
+          <div className="d-flex aziendeMenu-righe">
             <div className="aziendeMenu-col aziendeMenu-col--sx">
               <p className="aziendeMenu-titolo">Le mie app</p>
 

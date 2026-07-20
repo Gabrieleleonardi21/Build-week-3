@@ -33,7 +33,7 @@ function DropdownUser() {
     <Dropdown align="end">
       <Dropdown.Toggle as={UserToggle} id="user-dropdown" />
 
-      <Dropdown.Menu className="userMenu">
+      <Dropdown.Menu className="userMenu dropdownCentrato">
         <div className="px-3 pt-2 d-flex gap-2">
           <img
             src={AVATAR}
