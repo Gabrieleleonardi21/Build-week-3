@@ -1,0 +1,32 @@
+.logo {
+    width: 40px;
+}
+
+#search {
+    border-radius: 16px;
+    border: 0.5px solid rgb(167, 167, 167);
+    min-width: 300px;
+    margin-left: 10px;
+}
+
+.icon {
+     width: 25px;
+}
+
+.iconContainer {
+    opacity: 0.65;
+}
+
+.iconContainer:hover {
+    opacity: 1;
+}
+
+p, a {
+    font-size: 12px;
+    text-decoration: none;
+    color: black;
+}
+
+.user {
+    width: 25px;
+}
