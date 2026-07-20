@@ -15,7 +15,7 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
         e.preventDefault();
         onClick(e);
       }}
-      className="px-3 d-flex flex-column align-items-center userToggle"
+      className="px-3 d-flex flex-column align-items-center userToggle dropdown"
     >
       <img src={AVATAR} alt="foto profilo" className="icon rounded-circle" />
       <p className="p-0 m-0 d-flex align-items-center gap-1">

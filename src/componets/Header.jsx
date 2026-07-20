@@ -1,20 +1,24 @@
-import { Container } from "react-bootstrap"
-import Logo from "./Logo"
-import Search from "./Search"
-import Icon from "./Icon"
-import User from "./User"
-import Menu from "./Menu"
+import { Container } from "react-bootstrap";
+import Logo from "./Logo";
+import Icon from "./Icon";
+import Menu from "./Menu";
+import Search from "./Search";
 
-function Header () {
-    return (
-        <Container className="pt-3 d-flex">
-            <Logo/>
-            <Search/>
-            <Icon />
-            <User/>
-            <Menu/>
-        </Container>
-    )
+function Header() {
+  return (
+    <>
+      <Container fluid className="border-bottom d-flex align-items-center justify-content-evenly">
+        <div className="d-flex">
+        <Logo />
+        <Search/>
+        </div>
+        <div className="d-flex align-items-center">
+          <Icon />
+          <Menu />
+        </div>
+      </Container>
+    </>
+  );
 }
 
-export default Header
+export default Header;
