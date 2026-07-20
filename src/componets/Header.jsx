@@ -3,6 +3,7 @@ import Logo from "./Logo"
 import Search from "./Search"
 import Icon from "./Icon"
 import User from "./User"
+import Menu from "./Menu"
 
 function Header () {
     return (
@@ -11,6 +12,7 @@ function Header () {
             <Search/>
             <Icon />
             <User/>
+            <Menu/>
         </Container>
     )
 }
