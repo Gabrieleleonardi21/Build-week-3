@@ -1,5 +1,3 @@
-import Search from "./Search";
-
 function Logo() {
   return (
     <>
