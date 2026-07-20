@@ -1,0 +1,62 @@
+.userToggle img {
+    height: 25px;
+    object-fit: cover;
+}
+
+.userMenu {
+    --bs-dropdown-min-width: 280px;
+    --bs-dropdown-font-size: 14px;
+    --bs-dropdown-padding-y: 0;
+    --bs-dropdown-item-padding-y: 6px;
+    --bs-dropdown-item-padding-x: 16px;
+    --bs-dropdown-border-radius: 8px;
+    --bs-dropdown-divider-margin-y: 8px;
+    padding-bottom: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.userMenu .dropdown-item {
+    font-size: 14px;
+}
+
+.userMenu-avatar {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+}
+
+.userMenu-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.userMenu-sub {
+    font-size: 13px;
+}
+
+.userMenu-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin: 8px 0 0;
+    padding: 0 16px;
+}
+
+.userMenu-btn {
+    flex: 1;
+    text-align: center;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.userMenu-btn--outline {
+    border: 1px solid #0a66c2;
+    color: #0a66c2;
+}
+
+.userMenu-btn--fill {
+    background-color: #0a66c2;
+    color: white;
+}
