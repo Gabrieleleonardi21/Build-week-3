@@ -1,48 +1,77 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Card from './Card'
 import ProfileImage from './ProfileImage'
 import PublishButtons from './PublishButtons'
-import { readImageFile } from '../api'
+import { validateImageFile, uploadImage } from '../api'
 
-// Box "Crea un post": in modalità scrittura mostra la textarea, permette di
-// allegare un'immagine (condivisione) e pubblica tramite onPublish.
+// Box "Crea un post": scrittura del testo + condivisione immagine.
+// L'immagine viene mostrata in anteprima (object URL locale) alla selezione e
+// caricata su Firebase Storage solo al momento della pubblicazione.
 function CreatePost({ user, onPublish }) {
   const [open, setOpen] = useState(false) // true = composer espanso
   const [text, setText] = useState('')
-  const [image, setImage] = useState('') // data URL dell'immagine allegata
+  const [file, setFile] = useState(null) // File immagine selezionato
+  const [preview, setPreview] = useState('') // object URL per l'anteprima
+  const [uploading, setUploading] = useState(false)
   const fileRef = useRef(null)
+
+  // Revoca l'object URL quando cambia o al dismount, per non sprecare memoria
+  useEffect(() => {
+    if (!preview) return
+    return () => URL.revokeObjectURL(preview)
+  }, [preview])
 
   // Apre il selettore file di sistema
   function pickImage() {
     fileRef.current.click()
   }
 
-  // Converte il file scelto in data URL e lo mette in anteprima.
-  // readImageFile valida formato (solo JPEG/PNG) e dimensione (max 30 MB):
-  // se il file non è valido mostra il messaggio d'errore relativo.
-  async function onFile(e) {
-    const file = e.target.files[0]
-    if (!file) return
+  // Valida (JPEG/PNG, max 30 MB) e imposta file + anteprima locale
+  function onFile(e) {
+    const selected = e.target.files[0]
+    e.target.value = '' // consente di ricaricare lo stesso file
+    if (!selected) return
     try {
-      setImage(await readImageFile(file))
-      setOpen(true)
+      validateImageFile(selected)
     } catch (err) {
       alert(err.message)
+      return
     }
-    e.target.value = '' // consente di ricaricare lo stesso file
+    setFile(selected)
+    setPreview(URL.createObjectURL(selected))
+    setOpen(true)
+  }
+
+  function clearImage() {
+    setFile(null)
+    setPreview('')
   }
 
   // Svuota il composer e lo richiude
   function reset() {
     setText('')
-    setImage('')
+    clearImage()
     setOpen(false)
   }
 
-  // Pubblica solo se c'è testo o immagine
-  function publish() {
+  // Pubblica: se c'è un'immagine la carica su Storage e usa l'URL ottenuto
+  async function publish() {
     const clean = text.trim()
-    if (!clean && !image) return
+    if (!clean && !file) return
+
+    let image = ''
+    if (file) {
+      try {
+        setUploading(true)
+        image = await uploadImage(file)
+      } catch (err) {
+        alert(`Caricamento immagine fallito: ${err.message}`)
+        setUploading(false)
+        return
+      }
+      setUploading(false)
+    }
+
     onPublish({ text: clean, image })
     reset()
   }
@@ -54,7 +83,11 @@ function CreatePost({ user, onPublish }) {
     { icon: 'bi-newspaper', label: 'Scrivi articolo', color: '#e06847', onClick: () => setOpen(true) },
   ]
 
-  const canPublish = Boolean(text.trim()) || Boolean(image)
+  const canPublish = (Boolean(text.trim()) || Boolean(file)) && !uploading
+
+  // Etichetta del bottone Pubblica (evito l'operatore ternario nel JSX)
+  let publishLabel = 'Pubblica'
+  if (uploading) publishLabel = 'Pubblico…'
 
   return (
     <Card className="p-3 mb-2">
@@ -78,13 +111,13 @@ function CreatePost({ user, onPublish }) {
         )}
       </div>
 
-      {open && image && (
+      {open && preview && (
         <div className="composer-preview mt-2">
-          <img src={image} alt="Anteprima immagine" />
+          <img src={preview} alt="Anteprima immagine" />
           <button
             type="button"
             className="preview-remove"
-            onClick={() => setImage('')}
+            onClick={clearImage}
             aria-label="Rimuovi immagine"
           >
             <i className="bi bi-x-lg" />
@@ -108,7 +141,7 @@ function CreatePost({ user, onPublish }) {
 
         {open && (
           <button type="button" className="btn-publish" onClick={publish} disabled={!canPublish}>
-            Pubblica
+            {publishLabel}
           </button>
         )}
       </div>

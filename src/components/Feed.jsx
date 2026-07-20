@@ -1,59 +1,62 @@
 import { useEffect, useState } from 'react'
 import CreatePost from './CreatePost'
 import Post from './Post'
+import { isFirebaseConfigured } from '../firebase'
 import {
   CURRENT_USER,
-  loadFeed,
+  subscribeFeed,
+  seedIfEmpty,
   addPost,
   addComment,
   toggleLike,
   sharePost,
 } from '../api'
 
-// Colonna centrale del feed: orchestrazione dello stato dei post e delle azioni.
-// Tutte le scritture passano da api.js (che aggiorna anche localStorage).
+// Colonna centrale del feed. I dati vivono su Firebase Realtime Database:
+// ci si iscrive con subscribeFeed e la UI si aggiorna in tempo reale a ogni
+// scrittura (anche da altri utenti). Le mutazioni passano tutte da api.js.
 function Feed() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const user = CURRENT_USER
 
-  // Carica il feed una sola volta al montaggio; `alive` evita update dopo unmount
   useEffect(() => {
-    let alive = true
-    loadFeed()
-      .then((data) => {
-        if (alive) setPosts(data)
-      })
-      .catch(() => {
-        // offline o API non raggiungibile: si parte comunque da feed vuoto
-      })
-      .finally(() => {
-        if (alive) setLoading(false)
-      })
-    return () => {
-      alive = false
-    }
+    // semina il DB se vuoto, poi ascolta gli aggiornamenti in tempo reale
+    seedIfEmpty().catch(() => {})
+    const unsubscribe = subscribeFeed((data) => {
+      setPosts(data)
+      setLoading(false)
+    })
+    return () => unsubscribe()
   }, [])
 
-  // Handler: delegano la mutazione ad api.js e aggiornano lo stato
+  // Handler: delegano la scrittura ad api.js; il refresh arriva da subscribeFeed
   function publish({ text, image }) {
-    setPosts((prev) => addPost(prev, { text, image }))
+    addPost({ text, image })
   }
   function comment(id, text) {
-    setPosts((prev) => addComment(prev, id, text))
+    addComment(id, text)
   }
-  function like(id) {
-    setPosts((prev) => toggleLike(prev, id))
+  function like(id, likedByMe) {
+    toggleLike(id, likedByMe)
   }
   function share(id) {
-    setPosts((prev) => sharePost(prev, id))
+    sharePost(id)
   }
 
   return (
     <div className="feed">
       <CreatePost user={user} onPublish={publish} />
 
-      {loading && <p className="text-center text-muted mt-3">Caricamento del feed…</p>}
+      {!isFirebaseConfigured && (
+        <p className="text-center text-muted mt-3">
+          Configura Firebase (file <code>.env.local</code>) per attivare il feed in tempo reale.
+        </p>
+      )}
+
+      {isFirebaseConfigured && loading && (
+        <p className="text-center text-muted mt-3">Caricamento del feed…</p>
+      )}
 
       {posts.map((post) => (
         <Post
