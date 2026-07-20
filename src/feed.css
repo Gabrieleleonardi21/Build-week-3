@@ -1,0 +1,216 @@
+/* Stile della home/feed in tema LinkedIn */
+
+body {
+  background: #f4f2ee;
+}
+
+/* Card generica riutilizzabile */
+.li-card {
+  background: #fff;
+  border: 1px solid #e0dfdc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Immagine profilo */
+.profile-img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-img--empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e7e7e7;
+  color: #6b6b6b;
+}
+
+/* ---- Composer / creazione post ---- */
+.composer-trigger,
+.composer-area {
+  flex: 1;
+  border: 1px solid #a6a6a6;
+  border-radius: 24px;
+  padding: 10px 16px;
+  background: #fff;
+  color: #666;
+  font-size: 14px;
+  text-align: left;
+}
+.composer-area {
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 90px;
+  color: #000;
+}
+.composer-preview {
+  position: relative;
+}
+.composer-preview img {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+.preview-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+/* Bottoni di pubblicazione (Foto/Video/Articolo) */
+.publish-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #5f6163;
+  font-weight: 600;
+  font-size: 14px;
+}
+.publish-btn:hover {
+  background: #f3f3f3;
+}
+.btn-publish {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 18px;
+  background: #0a66c2;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.btn-publish:disabled {
+  background: #c7c7c7;
+}
+
+/* ---- Post ---- */
+.post-image {
+  width: 100%;
+  display: block;
+}
+.post-author {
+  font-weight: 600;
+  font-size: 14px;
+  color: #000;
+}
+.post-headline,
+.post-time {
+  font-size: 12px;
+  color: #666;
+}
+.post-text {
+  font-size: 14px;
+  color: #000;
+  white-space: pre-wrap; /* mantiene gli a capo scritti dall'utente */
+  word-break: break-word;
+}
+.post-counters {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Azioni del post */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #5f6163;
+  font-weight: 600;
+  font-size: 14px;
+}
+.action-btn:hover {
+  background: #f3f3f3;
+}
+.action-btn--active {
+  color: #0a66c2;
+}
+
+/* ---- Commenti ---- */
+.comment-input {
+  flex: 1;
+  border: 1px solid #a6a6a6;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+.btn-comment {
+  border: none;
+  border-radius: 20px;
+  padding: 4px 14px;
+  background: #0a66c2;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-comment:disabled {
+  background: #c7c7c7;
+}
+.comment-body {
+  background: #f2f2f2;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+.comment-author {
+  font-weight: 600;
+  font-size: 13px;
+}
+.comment-text {
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.comment-time {
+  font-size: 11px;
+  color: #888;
+}
+
+/* ---- Colonna profilo ---- */
+.profile-banner {
+  height: 56px;
+  background: linear-gradient(90deg, #a0b4c8, #c8d6e5);
+}
+.profile-avatar {
+  margin-top: -36px;
+  margin-bottom: 6px;
+}
+.profile-avatar .profile-img {
+  border: 2px solid #fff;
+}
+.profile-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+}
+.profile-headline {
+  font-size: 12px;
+  color: #444;
+}
+.profile-location {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ---- Colonna notizie ---- */
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.news-list li {
+  font-size: 13px;
+  font-weight: 600;
+  color: #000;
+  padding: 4px 0;
+}
