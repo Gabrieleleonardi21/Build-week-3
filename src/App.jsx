@@ -1,11 +1,17 @@
-import "bootstrap/dist/css/bootstrap.min.css"
-import './App.css'
-import Header from './componets/Header'
+import { Routes, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "./App.css";
+import Landing from "./components/Landing";
+import Register from "./components/Register";
 
 function App() {
   return (
-    <Header/>
-  )
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/register" element={<Register />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

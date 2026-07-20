@@ -30,3 +30,24 @@ p, a {
 .user {
     width: 25px;
 }
+
+.join-btn:hover {
+    background-color: #F1F7FF;
+    color: #4876A7;
+    border-color: #4876A7;
+}
+
+.signin-btn {
+    background-color: #0966C2;
+    border-color: #0966C2;
+}
+
+.signin-btn:hover {
+    background-color: #004182;
+    border-color: #004182;
+}
+
+.logo-esteso {
+    height: 60px;
+    width: auto;
+}
