@@ -1,0 +1,7 @@
+{
+  "//": "ATTENZIONE: regole aperte, SOLO per sviluppo. Restringere prima della produzione.",
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}

@@ -1,0 +1,9 @@
+rules_version = '2';
+// ATTENZIONE: regole aperte, SOLO per sviluppo. Restringere prima della produzione.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
