@@ -58,7 +58,7 @@ const Landing = () => {
 
         <div className="d-flex gap-2">
           <Link
-            to="/register"
+            to="/signup"
             className="btn btn-outline-primary rounded-pill px-3 join-btn"
           >
             Join now
@@ -123,7 +123,7 @@ const Landing = () => {
 
           <p>
             New to LinkedIn?{" "}
-            <Link to="/register" className="fw-bold text-decoration-none">
+            <Link to="/signup" className="fw-bold text-decoration-none">
               Join now
             </Link>
           </p>
