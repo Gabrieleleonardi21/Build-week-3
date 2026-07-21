@@ -140,11 +140,11 @@ function Sidebar() {
         <div className="d-flex align-items-center gap-2">
           <span style={{ fontSize: '1.1rem' }}>🏅</span>
           
-             <a> href="#"
+             <a href="#"
             className="small fw-semibold text-decoration-none"
             style={{ color: '#0a66c2' }}
             onClick={handlePremiumClick}
-        
+             >
             Prova 1 mese per 0 €
           </a>
         </div>
