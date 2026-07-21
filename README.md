@@ -1,289 +1,214 @@
-# Build Week 3 — Clone di LinkedIn
+# 🚀 Build Week 3 — LinkedIn Clone
 
-Applicazione web che riproduce le pagine principali di LinkedIn (landing,
-autenticazione, feed, profilo) con un **feed in tempo reale** su Firebase
-Realtime Database. Progetto di gruppo (Build Week EPICODE).
-
----
-
-## Indice
-
-- [Funzionalità](#funzionalità)
-- [Stack tecnologico](#stack-tecnologico)
-- [Requisiti](#requisiti)
-- [Avvio rapido](#avvio-rapido)
-- [Configurazione Firebase](#configurazione-firebase)
-- [Script disponibili](#script-disponibili)
-- [Struttura del progetto](#struttura-del-progetto)
-- [Routing](#routing)
-- [Data layer](#data-layer)
-- [Componenti](#componenti)
-- [Scelte architetturali](#scelte-architetturali)
-- [Deploy](#deploy)
-- [Problemi noti](#problemi-noti)
+> Un'applicazione web moderna che riproduce le funzionalità core di **LinkedIn** (Feed, Autenticazione, Profilo, Interazioni) basata su un **feed in tempo reale** alimentato da Firebase Realtime Database.
+> _Progetto di gruppo realizzato durante la Build Week del corso EPICODE._
 
 ---
 
-## Funzionalità
+## 📌 Indice
 
-- **Landing** pubblica con accesso rapido e link a registrazione/login
-- **Autenticazione simulata**: `SignUp` e `Login` (senza backend reale)
-  portano direttamente al feed
-- **Feed in tempo reale** su Firebase:
-  - pubblicazione di post con **testo e immagini** (ridimensionate lato client)
-  - **like** (con identità del client via `localStorage`, senza login)
-  - **commenti** e **condivisioni**
-  - aggiornamento istantaneo per tutti i client collegati
-- **Header** sticky con:
-  - ricerca **a scomparsa** (sotto `lg` è solo una lente, si espande al click)
-  - menu **"Per le aziende"**
-  - menu utente (Visualizza profilo, logout)
-- **Navigazione via URL** (react-router) con `Layout` condiviso e **barra
-  inferiore** su mobile
-- **Pagina profilo** utente completa
-- **Toast Premium** con **chiusura automatica dopo 5 secondi**
-- **Sidebar** con dati persistiti in `localStorage`
+- [✨ Funzionalità](https://www.google.com/search?q=%23-funzionalit%C3%A0)
+- [🛠️ Stack Tecnologico](https://www.google.com/search?q=%23%EF%B8%8F-stack-tecnologico)
+- [⚡ Avvio Rapido](https://www.google.com/search?q=%23-avvio-rapido)
+- [🔥 Configurazione Firebase](https://www.google.com/search?q=%23-configurazione-firebase)
+- [📜 Script Disponibili](https://www.google.com/search?q=%23-script-disponibili)
+- [🗂️ Struttura del Progetto](https://www.google.com/search?q=%23%EF%B8%8F-struttura-del-progetto)
+- [🛣️ Routing & Architettura](https://www.google.com/search?q=%23%EF%B8%8F-routing--architettura)
+- [💾 Data Layer & Modello Dati](https://www.google.com/search?q=%23-data-layer--modello-dati)
+- [🧩 Panoramica Componenti](https://www.google.com/search?q=%23-panoramica-componenti)
+- [⚠️ Problemi Noti](https://www.google.com/search?q=%23%EF%B8%8F-problemi-noti)
 
 ---
 
-## Stack tecnologico
+## ✨ Funzionalità
 
-| Ambito | Tecnologia | Versione |
-|--------|-----------|----------|
-| UI | React | 19 |
-| Build tool | Vite | 8 |
-| Routing | react-router-dom | 7 |
-| Stile | Bootstrap + Bootstrap Icons | 5 / 1.13 |
-| Componenti UI | react-bootstrap | 2.10 |
-| Backend dati | Firebase (Realtime Database) | 12 |
-| Caroselli | Swiper | 14 |
-| Lint | ESLint | 10 |
+- **🌐 Landing Page Pubblica:** Hero section responsive con quick-access per registrazione e login.
+- **🔑 Autenticazione Simulata:** Flusso di `SignUp` e `Login` integrato per accedere direttamente all'esperienza del feed.
+- **⚡ Feed in Tempo Reale (Firebase DB):**
+- **Creazione Post:** Supporto per testo ed immagini con **compressione e ridimensionamento lato client**.
+- **Interazioni:** Sistema di **Like** (persistiti via `localStorage` del client), **Commenti** e **Condivisioni**.
+- **Sincronizzazione Instant:** Aggiornamento live in tempo reale per tutti gli utenti connessi.
 
----
+- **🔍 Header Sticky Reattivo:**
+- Ricerca dinamica _a scomparsa_ (icona sotto `lg`, input espandibile al click).
+- Menu contestuali **"Per le aziende"** e Menu Utente esteso.
 
-## Requisiti
-
-- **Node.js** 18+ (consigliato 20+)
-- **npm** 9+
-- (Opzionale) un progetto **Firebase** con Realtime Database attivo
+- **📱 Navigazione Mobile-First:** Routing via `react-router-dom` v7 con layout nativo e **bottom bar** per schermi mobile.
+- **👤 Pagina Profilo Utente:** Vista utente completa con dati mockati e configurabili.
+- **💎 UX Polish:** Toast "Premium" personalizzati con autoclose temporizzato (5s) e Sidebar con persistenza locale.
 
 ---
 
-## Avvio rapido
+## 🛠️ Stack Tecnologico
+
+| Ambito                 | Tecnologia                                                                                                                                                     | Versione     |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| **Frontend Framework** | [React](https://www.google.com/search?q=https://react.dev/)                                                                                                    | `^19.0`      |
+| **Build Tool**         | [Vite](https://www.google.com/search?q=https://vitejs.dev/)                                                                                                    | `^8.0`       |
+| **Routing**            | [React Router DOM](https://www.google.com/search?q=https://reactrouter.com/)                                                                                   | `^7.0`       |
+| **UI & Stylings**      | [Bootstrap](https://www.google.com/search?q=https://getbootstrap.com/) / [React Bootstrap](https://www.google.com/search?q=https://react-bootstrap.github.io/) | `5` / `2.10` |
+| **Iconset**            | [Bootstrap Icons](https://www.google.com/search?q=https://icons.getbootstrap.com/)                                                                             | `1.13`       |
+| **Backend & DB**       | [Firebase Realtime Database](https://www.google.com/search?q=https://firebase.google.com/)                                                                     | `^12.0`      |
+| **Caroselli**          | [Swiper](https://www.google.com/search?q=https://swiperjs.com/)                                                                                                | `^14.0`      |
+| **Code Quality**       | [ESLint](https://www.google.com/search?q=https://eslint.org/)                                                                                                  | `^10.0`      |
+
+---
+
+## ⚡ Avvio Rapido
+
+### Requisiti previsti
+
+- **Node.js** `18+` (Raccomandato `20+`)
+- **npm** `9+`
+
+### Procedura di installazione
 
 ```bash
-# 1. Installa le dipendenze
+# 1. Clona il repository ed entra nella cartella
+git clone https://github.com/tuo-team/build-week-3.git
+cd build-week-3
+
+# 2. Installa le dipendenze
 npm install
 
-# 2. (Opzionale) Configura Firebase
+# 3. (Opzionale) Configura l'ambiente Firebase
 cp .env.example .env.local
-#    poi apri .env.local e inserisci le variabili VITE_FIREBASE_*
 
-# 3. Avvia in sviluppo
+# 4. Avvia il server di sviluppo
 npm run dev
-```
-
-> **Firebase è opzionale per l'avvio.** Se `.env.local` non è configurato,
-> l'app parte comunque: il feed mostra un messaggio che invita a configurare
-> Firebase (vedi `isFirebaseConfigured` in `src/firebase.js`). Landing,
-> autenticazione, profilo e navigazione funzionano anche senza.
-
----
-
-## Configurazione Firebase
-
-1. Crea un progetto su [Firebase Console](https://console.firebase.google.com/).
-2. Attiva **Realtime Database** (non Firestore).
-3. Copia `.env.example` in `.env.local` e compila le variabili
-   (le trovi in *Impostazioni progetto → Le tue app → config web*):
-
-| Variabile | Descrizione |
-|-----------|-------------|
-| `VITE_FIREBASE_API_KEY` | API key del progetto |
-| `VITE_FIREBASE_AUTH_DOMAIN` | dominio di autenticazione |
-| `VITE_FIREBASE_DATABASE_URL` | **URL del Realtime Database** (obbligatorio: senza questo l'app considera Firebase non configurato) |
-| `VITE_FIREBASE_PROJECT_ID` | id progetto |
-| `VITE_FIREBASE_STORAGE_BUCKET` | bucket storage |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | sender id |
-| `VITE_FIREBASE_APP_ID` | app id |
-
-> Il prefisso `VITE_` è obbligatorio perché Vite esponga le variabili al client.
-> `.env.local` **non va committato** (è già in `.gitignore`).
-
-Le regole del database sono in [database.rules.json](database.rules.json).
-Al primo avvio con DB vuoto, `seedIfEmpty()` popola automaticamente il feed
-con post di esempio.
-
----
-
-## Script disponibili
-
-| Comando | Descrizione |
-|---------|-------------|
-| `npm run dev` | server di sviluppo con hot reload |
-| `npm run build` | build di produzione in `dist/` |
-| `npm run preview` | anteprima locale della build |
-| `npm run lint` | controllo ESLint su tutto il progetto |
-
----
-
-## Struttura del progetto
 
 ```
+
+> ℹ️ **Nota sul funzionamento Offline/Fallback:**
+> Firebase è **opzionale** per il solo avvio iniziale del layout. Se non configuri `.env.local`, l'app si avvierà in modalità degradata mostrando un warning contestuale nel feed, lasciando comunque navigabili la Landing, Auth e Profilo.
+
+---
+
+## 🔥 Configurazione Firebase
+
+1. Vai sulla [Firebase Console](https://console.firebase.google.com/) e crea un nuovo progetto.
+2. Attiva il servizio **Realtime Database** (Assicurati che **non** sia Firestore).
+3. Compila il file `.env.local` inserendo le credenziali disponibili in _Impostazioni Progetto → Le tue app_:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_DATABASE_URL=https://your_project-default-rtdb.firebaseio.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+
+```
+
+> ⚠️ **Importante:** L'URL in `VITE_FIREBASE_DATABASE_URL` è tassativo per consentire l'aggancio del feed. Il file `.env.local` è protetto via `.gitignore` e non va committato.
+
+---
+
+## 📜 Script Disponibili
+
+| Comando           | Operazione                                                           |
+| ----------------- | -------------------------------------------------------------------- |
+| `npm run dev`     | Avvia il server locale di sviluppo con Hot Module Replacement (HMR). |
+| `npm run build`   | Compila l'applicazione per la produzione dentro la cartella `/dist`. |
+| `npm run preview` | Esegue un server locale per testare la build di produzione.          |
+| `npm run lint`    | Analizza il codice sorgente tramite ESLint per scovare errori.       |
+
+---
+
+## 🗂️ Struttura del Progetto
+
+```ls
 Build-week-3/
-├── public/                 # asset statici (logo, icone SVG, immagini)
-├── database.rules.json     # regole del Realtime Database
-├── firebase.json           # configurazione deploy Firebase
-├── .env.example            # template variabili d'ambiente
-├── index.html
-└── src/
-    ├── main.jsx            # entry point: monta <App> dentro <BrowserRouter>
-    ├── App.jsx             # definizione di tutte le rotte
-    ├── firebase.js         # init Firebase Realtime Database da .env
-    ├── api.js              # data layer: CRUD feed, seed, utente, immagini
-    ├── data.js             # dati statici e helper puri (headline, testi seed)
-    ├── App.css             # stili globali (header, footer, nav, toast, landing)
-    ├── feed.css            # stili del feed
-    ├── index.css           # reset/base
-    ├── assets/css/         # CSS specifici (Menu, DropdownUser)
-    └── components/         # tutti i componenti React
+├── 📁 public/                 # Asset statici (Logo, SVG, Favicon)
+├── 📄 database.rules.json     # Regole di lettura/scrittura Firebase DB
+├── 📄 firebase.json           # Configurazione Firebase Hosting/Deploy
+├── 📄 .env.example            # Template delle variabili d'ambiente
+└── 📁 src/
+    ├── 📄 main.jsx            # Entry point React
+    ├── 📄 App.jsx             # Router centrale dell'app
+    ├── 📄 firebase.js         # Inizializzazione ed Export SDK Firebase
+    ├── 📄 api.js              # Data layer (CRUD, sanitizzazione, processing immagini)
+    ├── 📄 data.js             # Mock data statici e helper
+    ├── 📁 assets/             # Fogli di stile modulari
+    └── 📁 components/         # Moduli UI riutilizzabili
+
 ```
 
 ---
 
-## Routing
+## 🛣️ Routing & Architettura
 
-Le rotte sono definite in `src/App.jsx`. Le pagine dell'app condividono
-header e footer tramite il componente `Layout` (pattern con `<Outlet>`),
-così header e footer **non si rimontano** navigando tra le sezioni.
+L'applicazione sfrutta **React Router v7** e adotta il pattern `<Outlet>` all'interno del componente `Layout`. Questo impedisce il re-rendering di Header e Footer durante la navigazione:
 
-| Rotta | Pagina | Tipo |
-|-------|--------|------|
-| `/` | `Landing` | pubblica |
-| `/signup` | `SignUp` | pubblica |
-| `/login` | `Login` | pubblica |
-| `/home` | `Home` (feed) | app — sotto `Layout` |
-| `/rete` | `Placeholder` "La mia rete" | app — sotto `Layout` |
-| `/lavoro` | `Placeholder` "Lavoro" | app — sotto `Layout` |
-| `/messaggi` | `Placeholder` "Messaggistica" | app — sotto `Layout` |
-| `/notifiche` | `Placeholder` "Notifiche" | app — sotto `Layout` |
-| `/profile` | `Profile` | autonoma (header/footer propri) |
-| `*` | redirect a `/` | catch-all |
+```
+[ Root / App ]
+ ├── Layout (Shared Header & Footer)
+ │    ├── /home       --> <Home /> (Feed Live)
+ │    ├── /rete       --> <Placeholder />
+ │    ├── /lavoro     --> <Placeholder />
+ │    ├── /messaggi   --> <Placeholder />
+ │    └── /notifiche  --> <Placeholder />
+ ├── /profile         --> <Profile /> (Standalone Layout)
+ ├── /signup          --> <SignUp />
+ ├── /login           --> <Login />
+ └── /                --> <Landing />
 
-**Navigazione via URL:** `NavIcon` usa `Link` + `useLocation` e evidenzia
-(classe `iconAttiva`) la voce la cui rotta combacia con l'URL corrente.
+```
 
 ---
 
-## Data layer
+## 💾 Data Layer & Modello Dati
 
-Il feed vive sul **Realtime Database** di Firebase: ci si iscrive con
-`subscribeFeed` e la UI si aggiorna in tempo reale a ogni scrittura, anche
-da altri utenti. Tutte le mutazioni passano da `src/api.js`.
+Tutte le operazioni I/O verso Firebase sono isolate in `src/api.js`.
 
-### Funzioni principali (`src/api.js`)
+### Struttura Entità Post
 
-| Funzione | Descrizione |
-|----------|-------------|
-| `CURRENT_USER` | utente corrente (finto): id, nome, headline, location, avatar |
-| `subscribeFeed(cb)` | iscrizione al feed in tempo reale |
-| `seedIfEmpty(n = 6)` | popola il DB con post di esempio se vuoto |
-| `fetchPeople(n)` | persone casuali da randomuser.me (autori seed) |
-| `addPost({ text, image })` | crea un nuovo post |
-| `addComment(postId, text)` | aggiunge un commento |
-| `toggleLike(postId, liked)` | mette/toglie like |
-| `sharePost(postId)` | incrementa le condivisioni |
-| `validateImageFile(file)` | valida tipo e peso dell'immagine |
-| `processImage(file, maxSize=1080, quality=0.8)` | ridimensiona l'immagine lato client |
-| `sanitizeImage(url)` | consente solo `data:image/...` o URL http(s) (anti-XSS) |
-| `MAX_IMAGE_BYTES` / `ALLOWED_IMAGE_TYPES` | limiti: 30 MB, `image/jpeg` e `image/png` |
-
-### Modello dati
-
-```js
-// Post (normalizzato da toPost)
+```json
 {
-  id, author: { name, headline, avatar },
-  text, image, createdAt,
-  likes,        // numero di like
-  likedByMe,    // se il client corrente ha messo like
-  shares,
-  comments: [ { id, author: { name, avatar }, text, createdAt } ]
+  "id": "-Nx89ABC123XYZ",
+  "author": {
+    "name": "Nome Cognome",
+    "headline": "Full Stack Developer",
+    "avatar": "https://..."
+  },
+  "text": "Contenuto del post in formato testo...",
+  "image": "data:image/webp;base64,...",
+  "createdAt": 1710000000000,
+  "likes": 12,
+  "likedByMe": true,
+  "shares": 3,
+  "comments": [
+    {
+      "id": "c1",
+      "author": { "name": "Mario Rossi", "avatar": "..." },
+      "text": "Complimenti per il post!",
+      "createdAt": 1710000050000
+    }
+  ]
 }
 ```
 
-Non essendoci autenticazione, l'identità di "chi mette like" è un id stabile
-del client salvato in `localStorage` (`clientId()`).
+### Sicurezza e Trattamento Immagini
+
+- **Anti-XSS:** I link immagine vengono sottoposti alla funzione `sanitizeImage()` per prevenire execution di script malevoli (es. protocolli `javascript:`).
+- **Ottimizzazione Client-side:** `processImage()` ridimensiona le immagini caricate dall'utente prima dell'invio sul DB (max $1080\text{px}$, qualità $80\%$).
 
 ---
 
-## Componenti
+## 🧩 Panoramica Componenti
 
-### Layout e navigazione
-- `Layout` — struttura condivisa: `Header` + `Container`/`Outlet` + `FooterNav`
-- `Header` — barra superiore sticky (logo, ricerca, icone, menu)
-- `Search` — ricerca a scomparsa (lente → campo)
-- `Icon` — icone di navigazione (dropdown su mobile, in linea da `md`)
-- `Menu` — menu a tendina "Per le aziende"
-- `DropdownUser` / `User` — menu utente (profilo, logout)
-- `NavIcon` + `HomeIcon`/`NetworkIcon`/`JobIcon`/`ChatIcon`/`NotificationIcon`
-- `FooterNav` — barra inferiore mobile
-- `Logo` — logo cliccabile verso `/home`
-
-### Feed
-- `Feed` — colonna centrale, iscritta al DB
-- `CreatePost` — box di pubblicazione (testo + immagine)
-- `Post` / `PostActions` — post singolo e barra azioni
-- `Comments` / `Comment` — commenti
-- `RightAside` / `News` / `NewsCard` — colonna destra (news)
-- `Sidebar` / `ProfileCard` — colonna sinistra (profilo + scorciatoie)
-
-### Pagine
-- `Landing` — home pubblica
-- `SignUp` / `Login` — registrazione e accesso
-- `Profile` — pagina profilo
-- `Placeholder` — segnaposto riusabile per le sezioni non sviluppate
-- `LandingFooter` / `Footer` — footer
-
-### Extra
-- `PremiumToast` — toast Premium (chiusura automatica a 5 s)
-- `Puzzle` / `Banner` / `Pubblicta` — elementi decorativi/pubblicitari
+- **Layout & Navigation:** `Header`, `FooterNav`, `Search`, `DropdownUser`, `NavIcon`, `Logo`
+- **Feed Modules:** `Feed`, `CreatePost`, `Post`, `PostActions`, `Comments`, `Comment`
+- **Sidebar & Widgets:** `Sidebar`, `ProfileCard`, `RightAside`, `News`, `NewsCard`
+- **Views & Pages:** `Landing`, `SignUp`, `Login`, `Profile`, `Placeholder`
+- **UI Elements:** `PremiumToast`, `Banner`, `Pubblicita`
 
 ---
 
-## Scelte architetturali
+## ⚠️ Problemi Noti
 
-- **Layout condiviso (`<Outlet>`):** header e footer restano montati mentre si
-  naviga tra le pagine dell'app → nessun flicker, stato preservato.
-- **Navigazione guidata dall'URL:** la voce attiva deriva da `useLocation`,
-  senza stato/context globale da tenere sincronizzato.
-- **Firebase opzionale:** l'app degrada con eleganza se non configurato.
-- **Sicurezza immagini:** `sanitizeImage` accetta solo `data:image/...` o
-  URL http(s), scartando schemi pericolosi (es. `javascript:`) per prevenire XSS.
-- **Nessun backend di autenticazione:** login/registrazione sono simulati e
-  portano al feed; l'identità del client per i like è un id in `localStorage`.
-
----
-
-## Deploy
-
-Il progetto include la configurazione per le regole del Realtime Database
-([firebase.json](firebase.json) + [database.rules.json](database.rules.json)):
-
-```bash
-# richiede firebase-tools installato e login effettuato
-firebase deploy --only database
-```
-
-Per pubblicare il frontend, esegui `npm run build` e servi la cartella `dist/`
-(es. Firebase Hosting, Netlify, Vercel).
-
----
-
-## Problemi noti
-
-- `src/components/Sidebar.jsx` ha un warning ESLint (`setState` dentro
-  `useEffect`, per il ripristino da `localStorage`): non bloccante per il build.
-- Le regole del Realtime Database sono **aperte** (`.read`/`.write` = `true`):
-  vanno bene per la Build Week, ma **non** per la produzione.
-- L'autenticazione è simulata: non c'è verifica reale delle credenziali.
+> [!WARNING]
+>
+> 1. **Permessi Database Open:** Le regole in `database.rules.json` sono attive in modalità `.read: true` e `.write: true` per facilitare le fasi di sviluppo e testing durante la Build Week.
+> 2. **Autenticazione Mock:** Il sistema di Login/SignUp non verifica credenziali reali sul server, ma simula la sessione salvando l'identità dell'utente nel client (`localStorage`).
