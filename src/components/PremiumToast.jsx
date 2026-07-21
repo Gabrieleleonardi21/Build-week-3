@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 
+// Durata (ms) prima della chiusura automatica del toast
+const DURATA_TOAST = 5000;
+
 function PremiumToast() {
   const [show, setShow] = useState(false);
 
@@ -10,6 +13,13 @@ function PremiumToast() {
     window.addEventListener('showPremiumToast', handleShowToast);
     return () => window.removeEventListener('showPremiumToast', handleShowToast);
   }, []);
+
+  // Chiusura automatica dopo 5 secondi da quando il toast compare
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(() => setShow(false), DURATA_TOAST);
+    return () => clearTimeout(timer);
+  }, [show]);
 
   if (!show) return null;
 
