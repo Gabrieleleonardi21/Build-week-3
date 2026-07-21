@@ -17,7 +17,7 @@ function App() {
       <Header />
       <PremiumToast />
       <Container className="mt-3">
-        <Row className="justify-content-center">
+        <Row className="justify-content-center align-items-start">
           <Col lg={3} className="d-none d-lg-block">
             <Sidebar />
           </Col>
