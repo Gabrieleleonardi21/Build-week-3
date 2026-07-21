@@ -116,7 +116,7 @@ const SignUp = () => {
 
           <p className="text-center mt-3 mb-0">
             Already on LinkedIn?{" "}
-            <Link to="/home" className="fw-bold text-decoration-none">
+            <Link to="/login" className="fw-bold text-decoration-none">
               Sign in
             </Link>
           </p>

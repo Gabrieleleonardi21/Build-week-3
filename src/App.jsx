@@ -6,6 +6,7 @@ import "./App.css";
 import { NavAttivaContext } from "./navAttiva";
 import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
+import Login from "./components/Login";
 import Home from "./components/Home";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         {/* Landing pubblica; il feed (Home) vive su /home */}
         <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </NavAttivaContext.Provider>

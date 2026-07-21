@@ -63,9 +63,8 @@ const Landing = () => {
           >
             Join now
           </Link>
-          {/* Sign in porta direttamente al feed */}
           <Link
-            to="/home"
+            to="/login"
             className="btn btn-primary rounded-pill px-3 signin-btn"
           >
             Sign in
