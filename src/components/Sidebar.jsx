@@ -101,7 +101,7 @@ function Sidebar() {
 
         <div className="px-3 pt-2 pb-3">
           <h6 className="mb-0 fw-bold" style={{ fontSize: '1.05rem' }}>
-            Nicole Paulino
+            pippo pluto e paperinooo
           </h6>
           <p className="small text-muted mb-1">
             {experiences.length > 0 ? experiences[experiences.length - 1].titolo : '--'}
