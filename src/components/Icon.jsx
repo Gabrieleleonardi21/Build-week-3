@@ -1,35 +1,55 @@
+import { forwardRef } from "react";
+import Dropdown from "react-bootstrap/Dropdown";
+import ChatIcon from "./ChatIcon";
+import HomeIcon from "./HomeIcon";
+import JobIcon from "./JobIcon";
+import NetworkIcon from "./NetworkIcon";
+import NotificationIcon from "./NotificationIcon";
+import User from "./User";
+
+// Come in Menu/DropdownUser: toggle custom per impilare icona e scritta.
+const IconToggle = forwardRef(function IconToggle({ onClick }, ref) {
+  return (
+    <a
+      href="#"
+      ref={ref}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+      className="px-1 d-flex flex-column align-items-center iconContainer"
+      aria-label="Menu"
+    >
+      <i className="bi bi-list fs-4"></i>
+    </a>
+  );
+});
+
 function Icon() {
   return (
     <>
-      <div className="d-flex">
-        <a
-          href="#"
-          className="px-3 d-flex flex-column align-items-center iconContainer"
-        >
-          <img src="house-door-fill.svg" alt="icona house" className="icon" />
-          <p className="p-0 m-0">Home</p>
-        </a>
-        <a href="#" className=" px-3 d-flex flex-column align-items-center iconContainer">
-          <img src="people-fill.svg" alt="la mia rete" className="icon" />
-          <p className="p-0 m-0">La mia rete</p>
-        </a>
-        <a href="#" className="px-3 d-flex flex-column align-items-center iconContainer">
-          <img src="briefcase-fill.svg" alt="messaggistica" className="icon" />
-          <p className="p-0 m-0">Lavoro</p>
-        </a>
-        <a href="#" className="px-3 d-flex flex-column align-items-center iconContainer">
-          <img
-            src="chat-right-dots-fill.svg"
-            alt="messaggistica"
-            className="icon"
-          />
-          <p className="p-0 m-0">Messaggistica</p>
-        </a>
-        <a href="#" className="px-3 d-flex flex-column align-items-center iconContainer">
-          <img src="bell-fill.svg" alt="notifica" className="icon" />
-          <p className="p-0 m-0">Notifica</p>
-        </a>
+      {/* fino a md le icone stanno dentro un menu a tendina */}
+      <Dropdown align="end" className="d-md-none">
+        <Dropdown.Toggle as={IconToggle} id="menu-icone" />
+        <Dropdown.Menu className="iconMenu">
+          <HomeIcon />
+          <NetworkIcon />
+          <JobIcon />
+          <ChatIcon />
+          <NotificationIcon />
+        </Dropdown.Menu>
+      </Dropdown>
+
+      {/* da md in su restano in linea come prima */}
+      <div className="d-none d-md-flex align-items-center">
+        <HomeIcon />
+        <NetworkIcon />
+        <JobIcon />
+        <ChatIcon />
+        <NotificationIcon />
       </div>
+
+      <User />
     </>
   );
 }
