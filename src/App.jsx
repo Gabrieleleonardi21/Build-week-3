@@ -5,7 +5,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import { NavAttivaContext } from "./navAttiva";
 import Landing from "./components/Landing";
-import Register from "./components/Register";
+import SignUp from "./components/SignUp";
+import Login from "./components/Login";
 import Home from "./components/Home";
 import PremiumToast from "./components/PremiumToast";
 
@@ -17,7 +18,8 @@ function App() {
       <PremiumToast />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </NavAttivaContext.Provider>
