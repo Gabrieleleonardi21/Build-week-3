@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Footer from "./Footer";
+import LandingFooter from "./LandingFooter";
 
 // Landing page pubblica
 const Landing = () => {
@@ -58,14 +58,13 @@ const Landing = () => {
 
         <div className="d-flex gap-2">
           <Link
-            to="/register"
+            to="/signup"
             className="btn btn-outline-primary rounded-pill px-3 join-btn"
           >
             Join now
           </Link>
-          {/* Sign in porta direttamente al feed */}
           <Link
-            to="/home"
+            to="/login"
             className="btn btn-primary rounded-pill px-3 signin-btn"
           >
             Sign in
@@ -123,7 +122,7 @@ const Landing = () => {
 
           <p>
             New to LinkedIn?{" "}
-            <Link to="/register" className="fw-bold text-decoration-none">
+            <Link to="/signup" className="fw-bold text-decoration-none">
               Join now
             </Link>
           </p>
@@ -138,7 +137,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <Footer />
+      <LandingFooter />
     </>
   );
 };

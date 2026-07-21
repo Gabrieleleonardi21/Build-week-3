@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../assets/css/DropdownUser.css";
 
@@ -29,6 +30,14 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
 });
 
 function DropdownUser() {
+  const navigate = useNavigate();
+
+  // Per ora non c'è ancora un vero backend di autenticazione:
+  // il logout riporta alla Landing pubblica
+  function handleLogout() {
+    navigate("/");
+  }
+
   return (
     <Dropdown align="end">
       <Dropdown.Toggle as={UserToggle} id="user-dropdown" />
@@ -47,7 +56,14 @@ function DropdownUser() {
         </div>
 
         <div className="px-3 py-2 d-flex gap-2">
-          <a href="#" className="userMenu-btn userMenu-btn--outline">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/profile");
+            }}
+            className="userMenu-btn userMenu-btn--outline"
+          >
             Visualizza profilo
           </a>
           <a href="#" className="userMenu-btn userMenu-btn--fill">
@@ -71,7 +87,7 @@ function DropdownUser() {
 
         <Dropdown.Divider />
 
-        <Dropdown.Item href="#">Esci</Dropdown.Item>
+        <Dropdown.Item onClick={handleLogout}>Esci</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
