@@ -2,14 +2,16 @@ import { useRef, useState } from 'react'
 import Card from './Card'
 import ProfileImage from './ProfileImage'
 import PublishButtons from './PublishButtons'
-import { readImageFile } from '../api'
+import { processImage } from '../api'
 
-// Box "Crea un post": in modalità scrittura mostra la textarea, permette di
-// allegare un'immagine (condivisione) e pubblica tramite onPublish.
+// Box "Crea un post": scrittura del testo + condivisione immagine.
+// L'immagine viene validata, ridimensionata e compressa in un data URL leggero
+// (processImage) e salvata direttamente nel Realtime Database col post.
 function CreatePost({ user, onPublish }) {
   const [open, setOpen] = useState(false) // true = composer espanso
   const [text, setText] = useState('')
-  const [image, setImage] = useState('') // data URL dell'immagine allegata
+  const [image, setImage] = useState('') // data URL compresso
+  const [processing, setProcessing] = useState(false)
   const fileRef = useRef(null)
 
   // Apre il selettore file di sistema
@@ -17,19 +19,19 @@ function CreatePost({ user, onPublish }) {
     fileRef.current.click()
   }
 
-  // Converte il file scelto in data URL e lo mette in anteprima.
-  // readImageFile valida formato (solo JPEG/PNG) e dimensione (max 30 MB):
-  // se il file non è valido mostra il messaggio d'errore relativo.
+  // Valida (JPEG/PNG, max 30 MB), ridimensiona e comprime il file in un data URL
   async function onFile(e) {
     const file = e.target.files[0]
+    e.target.value = '' // consente di ricaricare lo stesso file
     if (!file) return
     try {
-      setImage(await readImageFile(file))
+      setProcessing(true)
+      setImage(await processImage(file))
       setOpen(true)
     } catch (err) {
       alert(err.message)
     }
-    e.target.value = '' // consente di ricaricare lo stesso file
+    setProcessing(false)
   }
 
   // Svuota il composer e lo richiude
@@ -54,7 +56,11 @@ function CreatePost({ user, onPublish }) {
     { icon: 'bi-newspaper', label: 'Scrivi articolo', color: '#e06847', onClick: () => setOpen(true) },
   ]
 
-  const canPublish = Boolean(text.trim()) || Boolean(image)
+  const canPublish = (Boolean(text.trim()) || Boolean(image)) && !processing
+
+  // Etichetta del bottone Pubblica (evito l'operatore ternario nel JSX)
+  let publishLabel = 'Pubblica'
+  if (processing) publishLabel = 'Elaboro…'
 
   return (
     <Card className="p-3 mb-2">
@@ -108,7 +114,7 @@ function CreatePost({ user, onPublish }) {
 
         {open && (
           <button type="button" className="btn-publish" onClick={publish} disabled={!canPublish}>
-            Pubblica
+            {publishLabel}
           </button>
         )}
       </div>

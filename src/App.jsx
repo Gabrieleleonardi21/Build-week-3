@@ -4,15 +4,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import Landing from "./components/Landing";
 import Register from "./components/Register";
+import Home from "./components/Home";
 
 function App() {
-  // Da controllare con gli altri: useState non importato, non usato in questo file (crasha la pagina)
-  // const [attiva, setAttiva] = useState("home");
-
   return (
     <Routes>
+      {/* Landing pubblica; il feed (Home) vive su /home */}
       <Route path="/" element={<Landing />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/home" element={<Home />} />
     </Routes>
   );
 }
