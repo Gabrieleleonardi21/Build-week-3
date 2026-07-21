@@ -6,6 +6,8 @@ import Landing from "./components/Landing";
 import Register from "./components/Register";
 
 function App() {
+  const [attiva, setAttiva] = useState("home");
+
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
