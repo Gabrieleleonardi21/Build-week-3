@@ -1,27 +1,18 @@
-import { Container, Row, Col } from "react-bootstrap";
-import Header from "./Header";
+import { Row, Col } from "react-bootstrap";
 import RightAside from "./RightAside";
 import Feed from "./Feed";
 import Sidebar from "./Sidebar";
-import FooterNav from "./FooterNav";
 
+// Contenuto della rotta /home: le tre colonne del feed.
+// Header, Container e FooterNav stanno nel Layout condiviso.
 function Home () {
     return (
-        <>
-            {/* Navbar dell'app in cima alla pagina del feed */}
-            <Header/>
-            {/* Container: allinea le colonne ed evita l'overflow orizzontale */}
-            <Container className="mt-3">
-                <Row>
-                    <Col xs={12} md={4} lg={3}><Sidebar/></Col>
-                    <Col xs={12} md={8} lg={6}><Feed/></Col>
-                    <Col xs={12} md={4} className="InvisibleCol"></Col>
-                    <Col xs={12} md={8} lg={3}><RightAside/></Col>
-                </Row>
-            </Container>
-            {/* Barra inferiore: visibile solo su mobile (d-lg-none) */}
-            <FooterNav/>
-        </>
+        <Row>
+            <Col xs={12} md={4} lg={3}><Sidebar/></Col>
+            <Col xs={12} md={8} lg={6}><Feed/></Col>
+            <Col xs={12} md={4} className="InvisibleCol"></Col>
+            <Col xs={12} md={8} lg={3}><RightAside/></Col>
+        </Row>
     )
 }
 

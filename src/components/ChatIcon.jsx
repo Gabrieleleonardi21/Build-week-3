@@ -3,7 +3,7 @@ import NavIcon from "./NavIcon";
 function ChatIcon () {
     return (
         <NavIcon
-          id="messaggistica"
+          to="/messaggi"
           src="chat-right-dots-fill.svg"
           alt="messaggistica"
           testo="Messaggistica"
