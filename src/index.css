@@ -1,0 +1,5 @@
+.sidebar-fixed {
+  position: sticky;
+  top: 80px;
+  align-self: flex-start;
+}

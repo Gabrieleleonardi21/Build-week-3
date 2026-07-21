@@ -2,7 +2,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import Header from "./Header";
 import RightAside from "./RightAside";
 import Feed from "./Feed";
-import ProfileCard from "./ProfileCard";
+import Sidebar from "./Sidebar";
 import FooterNav from "./FooterNav";
 
 function Home () {
@@ -13,7 +13,7 @@ function Home () {
             {/* Container: allinea le colonne ed evita l'overflow orizzontale */}
             <Container className="mt-3">
                 <Row>
-                    <Col xs={12} md={4} lg={3}><ProfileCard/></Col>
+                    <Col xs={12} md={4} lg={3}><Sidebar/></Col>
                     <Col xs={12} md={8} lg={6}><Feed/></Col>
                     <Col xs={12} md={4} className="InvisibleCol"></Col>
                     <Col xs={12} md={8} lg={3}><RightAside/></Col>
