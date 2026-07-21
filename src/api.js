@@ -1,5 +1,8 @@
-// Livello dati del feed: lettura (randomuser.me) + scrittura/condivisione immagini
-// con persistenza locale (localStorage). Nessun backend richiesto.
+// Livello dati del feed su Firebase Realtime Database.
+// Lettura in tempo reale (onValue) + scrittura (post, commenti, like, condivisioni)
+// e condivisione immagini. randomuser.me serve solo a generare i dati iniziali.
+import { ref, push, set, update, remove, get, onValue, runTransaction } from 'firebase/database'
+import { db } from './firebase'
 import {
   HEADLINES,
   POST_TEXTS,
@@ -10,7 +13,7 @@ import {
 } from './data'
 
 const API = 'https://randomuser.me/api/'
-const STORE_KEY = 'linkedin-feed-posts'
+const CLIENT_KEY = 'linkedin-client-id'
 
 // Utente attualmente loggato (dati dello screenshot). Avatar generato offline.
 export const CURRENT_USER = {
@@ -29,6 +32,17 @@ function uid() {
   return `id-${Date.now()}-${Math.floor(Math.random() * 1e6)}`
 }
 
+// Id stabile del client (salvato in localStorage): identifica "chi" mette like,
+// dato che non usiamo l'autenticazione.
+function clientId() {
+  let id = localStorage.getItem(CLIENT_KEY)
+  if (!id) {
+    id = uid()
+    localStorage.setItem(CLIENT_KEY, id)
+  }
+  return id
+}
+
 // Consente solo immagini sicure: data:image/... oppure URL http(s).
 // Scarta schemi pericolosi (es. javascript:) per evitare XSS.
 export function sanitizeImage(url) {
@@ -38,29 +52,34 @@ export function sanitizeImage(url) {
   return ''
 }
 
-// Lettura dello store locale (array di post) con parsing sicuro
-function readStore() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY)
-    if (!raw) return null
-    return JSON.parse(raw)
-  } catch {
-    return null
+// Converte un nodo grezzo del DB nel formato usato dai componenti
+function toPost(id, p) {
+  const likesMap = p.likes || {}
+  const commentsMap = p.comments || {}
+  const comments = Object.entries(commentsMap).map(([cid, c]) => ({
+    id: cid,
+    author: { name: c.authorName, avatar: c.authorAvatar },
+    text: c.text,
+    createdAt: c.createdAt,
+  }))
+  comments.sort((a, b) => a.createdAt - b.createdAt)
+
+  return {
+    id,
+    author: { name: p.authorName, headline: p.authorHeadline, avatar: p.authorAvatar },
+    text: p.text || '',
+    image: p.image || '',
+    createdAt: p.createdAt || 0,
+    likes: Object.keys(likesMap).length,
+    likedByMe: Boolean(likesMap[clientId()]),
+    shares: p.shares || 0,
+    comments,
   }
 }
 
-// Scrittura dello store locale; il try evita crash se la quota è superata
-function writeStore(posts) {
-  try {
-    localStorage.setItem(STORE_KEY, JSON.stringify(posts))
-  } catch {
-    console.warn('Impossibile salvare il feed in localStorage (quota superata?)')
-  }
-}
+// ---------- Lettura remota (randomuser) ----------
 
-// ---------- Lettura remota ----------
-
-// Recupera n persone casuali da randomuser.me (autori e "persone che potresti conoscere")
+// Recupera n persone casuali (autori dei post seed e "persone che potresti conoscere")
 export async function fetchPeople(n) {
   const res = await fetch(
     `${API}?results=${n}&nat=it,us,gb,fr,es&inc=name,picture,location,login`
@@ -77,125 +96,177 @@ export async function fetchPeople(n) {
   }))
 }
 
-// ---------- Seed del feed ----------
+// ---------- Seed del DB (solo la prima volta) ----------
 
-// Crea i commenti iniziali di un post scegliendo autori a caso tra le persone
+// Like fittizi iniziali: alcune chiavi casuali (il conteggio = numero di chiavi)
+function buildSeedLikes() {
+  const out = {}
+  const n = rand(0, 8)
+  for (let i = 0; i < n; i++) out[`seed-${uid()}`] = true
+  return out
+}
+
+// Commenti iniziali con autori scelti a caso tra le persone generate
 function buildSeedComments(people) {
-  const out = []
+  const out = {}
   const howMany = rand(0, 2)
   for (let i = 0; i < howMany; i++) {
     const author = people[rand(0, people.length - 1)]
-    out.push({
-      id: uid(),
-      author: { id: author.id, name: author.name, avatar: author.avatar },
+    out[uid()] = {
+      authorName: author.name,
+      authorAvatar: author.avatar,
       text: COMMENT_TEXTS[rand(0, COMMENT_TEXTS.length - 1)],
       createdAt: Date.now() - rand(1, 45) * 60000,
-    })
+    }
   }
   return out
 }
 
-// Costruisce un singolo post seed a partire da una persona
+// Nodo post nel formato del Realtime Database
 function buildSeedPost(person, i, people) {
   return {
-    id: uid(),
-    author: person,
+    authorName: person.name,
+    authorHeadline: person.headline,
+    authorAvatar: person.avatar,
     text: POST_TEXTS[i % POST_TEXTS.length],
     image: sanitizeImage(POST_IMAGES[i % POST_IMAGES.length]),
     createdAt: Date.now() - (i + 1) * 3600 * 1000, // post scaglionati nel tempo
-    likes: rand(3, 90),
-    likedByMe: false,
     shares: rand(0, 15),
+    likes: buildSeedLikes(),
     comments: buildSeedComments(people),
   }
 }
 
-// Carica il feed: se esiste in localStorage lo riusa, altrimenti lo genera e salva
-export async function loadFeed(seedCount = 6) {
-  const cached = readStore()
-  if (cached) return cached
+// Se /posts è vuoto, genera e salva i post iniziali (una sola scrittura batch)
+export async function seedIfEmpty(seedCount = 6) {
+  if (!db) return
+  const snap = await get(ref(db, 'posts'))
+  if (snap.exists()) return
   const people = await fetchPeople(seedCount)
-  const posts = people.map((p, i) => buildSeedPost(p, i, people))
-  writeStore(posts)
-  return posts
+  const updates = {}
+  people.forEach((person, i) => {
+    const postId = push(ref(db, 'posts')).key
+    updates[`posts/${postId}`] = buildSeedPost(person, i, people)
+  })
+  await update(ref(db), updates)
+}
+
+// ---------- Lettura in tempo reale ----------
+
+// Si iscrive al feed: `cb(posts)` viene richiamato a ogni cambiamento del DB.
+// Ritorna la funzione per annullare l'iscrizione (da usare nel cleanup useEffect).
+export function subscribeFeed(cb) {
+  if (!db) {
+    cb([])
+    return () => {}
+  }
+  const postsRef = ref(db, 'posts')
+  return onValue(postsRef, (snap) => {
+    const val = snap.val() || {}
+    const posts = Object.entries(val).map(([id, p]) => toPost(id, p))
+    posts.sort((a, b) => b.createdAt - a.createdAt) // più recenti in cima
+    cb(posts)
+  })
 }
 
 // ---------- Scrittura ----------
 
-// Aggiunge un nuovo post dell'utente corrente in cima al feed e lo persiste
-export function addPost(posts, { text, image }) {
-  const post = {
-    id: uid(),
-    author: CURRENT_USER,
+// Pubblica un nuovo post dell'utente corrente
+export async function addPost({ text, image }) {
+  if (!db) return
+  const node = push(ref(db, 'posts'))
+  await set(node, {
+    authorName: CURRENT_USER.name,
+    authorHeadline: CURRENT_USER.headline,
+    authorAvatar: CURRENT_USER.avatar,
     text: text || '',
     image: sanitizeImage(image),
     createdAt: Date.now(),
-    likes: 0,
-    likedByMe: false,
     shares: 0,
-    comments: [],
-  }
-  const next = [post, ...posts]
-  writeStore(next)
-  return next
+  })
 }
 
 // Aggiunge un commento (dell'utente corrente) al post indicato
-export function addComment(posts, postId, text) {
-  const next = posts.map((p) => {
-    if (p.id !== postId) return p
-    const comment = {
-      id: uid(),
-      author: { id: CURRENT_USER.id, name: CURRENT_USER.name, avatar: CURRENT_USER.avatar },
-      text,
-      createdAt: Date.now(),
-    }
-    return { ...p, comments: [...p.comments, comment] }
+export async function addComment(postId, text) {
+  if (!db) return
+  const node = push(ref(db, `posts/${postId}/comments`))
+  await set(node, {
+    authorName: CURRENT_USER.name,
+    authorAvatar: CURRENT_USER.avatar,
+    text,
+    createdAt: Date.now(),
   })
-  writeStore(next)
-  return next
 }
 
-// Attiva/disattiva il "Mi piace" dell'utente corrente sul post
-export function toggleLike(posts, postId) {
-  const next = posts.map((p) => {
-    if (p.id !== postId) return p
-    if (p.likedByMe) return { ...p, likedByMe: false, likes: p.likes - 1 }
-    return { ...p, likedByMe: true, likes: p.likes + 1 }
-  })
-  writeStore(next)
-  return next
+// Attiva/disattiva il "Mi piace" dell'utente corrente (una chiave per client)
+export async function toggleLike(postId, liked) {
+  if (!db) return
+  const likeRef = ref(db, `posts/${postId}/likes/${clientId()}`)
+  if (liked) {
+    await remove(likeRef)
+    return
+  }
+  await set(likeRef, true)
 }
 
-// Incrementa il contatore delle condivisioni del post
-export function sharePost(posts, postId) {
-  const next = posts.map((p) => {
-    if (p.id !== postId) return p
-    return { ...p, shares: p.shares + 1 }
+// Incrementa in modo atomico il contatore delle condivisioni
+export async function sharePost(postId) {
+  if (!db) return
+  const sharesRef = ref(db, `posts/${postId}/shares`)
+  await runTransaction(sharesRef, (curr) => {
+    if (!curr) return 1
+    return curr + 1
   })
-  writeStore(next)
-  return next
 }
 
-// Vincoli sulle immagini condivise: solo JPEG/PNG e sempre sotto i 30 MB.
+// ---------- Immagini (data URL nel Realtime Database) ----------
+
+// Vincoli sull'immagine di input: solo JPEG/PNG e sempre sotto i 30 MB.
 export const MAX_IMAGE_BYTES = 30 * 1024 * 1024 // 30 MB
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png']
 
-// Legge un file immagine locale e lo converte in data URL (per la condivisione).
-// Rifiuta formati diversi da JPEG/PNG e file oltre i 30 MB.
-export function readImageFile(file) {
+// Valida formato e dimensione del file; lancia un errore con messaggio se non ok.
+export function validateImageFile(file) {
+  if (!file || !ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error('Formato non valido: sono ammessi solo JPEG e PNG')
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    throw new Error('Immagine troppo grande: massimo 30 MB')
+  }
+}
+
+// Valida, ridimensiona (via canvas) e ricomprime l'immagine in un data URL JPEG.
+// Il Realtime Database non è pensato per file grandi: qui salviamo una versione
+// compatta (lato massimo `maxSize`px) per non appesantire il DB.
+export function processImage(file, maxSize = 1080, quality = 0.8) {
   return new Promise((resolve, reject) => {
-    if (!file || !ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      reject(new Error('Formato non valido: sono ammessi solo JPEG e PNG'))
+    try {
+      validateImageFile(file)
+    } catch (err) {
+      reject(err)
       return
     }
-    if (file.size > MAX_IMAGE_BYTES) {
-      reject(new Error('Immagine troppo grande: massimo 30 MB'))
-      return
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      let { width, height } = img
+      // riduce mantenendo le proporzioni se supera il lato massimo
+      if (width > maxSize || height > maxSize) {
+        const ratio = Math.min(maxSize / width, maxSize / height)
+        width = Math.round(width * ratio)
+        height = Math.round(height * ratio)
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height)
+      resolve(canvas.toDataURL('image/jpeg', quality))
     }
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = () => reject(new Error('Lettura immagine fallita'))
-    reader.readAsDataURL(file)
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      reject(new Error('Immagine non leggibile'))
+    }
+    img.src = url
   })
 }
