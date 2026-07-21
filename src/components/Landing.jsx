@@ -15,42 +15,43 @@ const Landing = () => {
           className="logo-esteso"
         />
 
+        {/* Voci della nav: per ora puntano tutte al feed (/home) */}
         <nav className="d-flex align-items-center gap-4">
-          <a
-            href="#"
+          <Link
+            to="/home"
             className="d-flex flex-column align-items-center text-decoration-none text-body"
           >
             <i className="bi bi-rocket-takeoff fs-4"></i>
             <span className="small">Top Content</span>
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/home"
             className="d-flex flex-column align-items-center text-decoration-none text-body"
           >
             <i className="bi bi-people fs-4"></i>
             <span className="small">People</span>
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/home"
             className="d-flex flex-column align-items-center text-decoration-none text-body"
           >
             <i className="bi bi-mortarboard fs-4"></i>
             <span className="small">Learning</span>
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/home"
             className="d-flex flex-column align-items-center text-decoration-none text-body"
           >
             <i className="bi bi-briefcase fs-4"></i>
             <span className="small">Jobs</span>
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/home"
             className="d-flex flex-column align-items-center text-decoration-none text-body"
           >
             <i className="bi bi-puzzle fs-4"></i>
             <span className="small">Games</span>
-          </a>
+          </Link>
         </nav>
 
         <div className="vr" style={{ height: "32px" }}></div>
@@ -62,9 +63,13 @@ const Landing = () => {
           >
             Join now
           </Link>
-          <button className="btn btn-primary rounded-pill px-3 signin-btn">
+          {/* Sign in porta direttamente al feed */}
+          <Link
+            to="/home"
+            className="btn btn-primary rounded-pill px-3 signin-btn"
+          >
             Sign in
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -77,7 +82,11 @@ const Landing = () => {
             Welcome to your professional community
           </h1>
 
-          <button className="btn btn-primary w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-2 mb-3">
+          {/* Accesso rapido con Google: porta al feed */}
+          <Link
+            to="/home"
+            className="btn btn-primary w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-2 mb-3"
+          >
             <span
               className="bg-white rounded-circle d-inline-flex align-items-center justify-content-center"
               style={{ width: "24px", height: "24px" }}
@@ -85,7 +94,7 @@ const Landing = () => {
               <i className="bi bi-google text-primary"></i>
             </span>
             Continue with Google
-          </button>
+          </Link>
 
           <div className="border rounded-4 d-flex align-items-center justify-content-between p-3 mb-4">
             <div className="d-flex align-items-center gap-2">
