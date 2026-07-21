@@ -43,7 +43,7 @@ function Post({ post, user, onLike, onComment, onShare }) {
 
         <PostActions
           liked={post.likedByMe}
-          onLike={() => onLike(post.id)}
+          onLike={() => onLike(post.id, post.likedByMe)}
           onComment={() => setShowComments((v) => !v)}
           onShare={() => onShare(post.id)}
         />
