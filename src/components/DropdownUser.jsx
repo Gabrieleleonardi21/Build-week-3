@@ -56,7 +56,14 @@ function DropdownUser() {
         </div>
 
         <div className="px-3 py-2 d-flex gap-2">
-          <a href="#" className="userMenu-btn userMenu-btn--outline">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/profile");
+            }}
+            className="userMenu-btn userMenu-btn--outline"
+          >
             Visualizza profilo
           </a>
           <a href="#" className="userMenu-btn userMenu-btn--fill">
