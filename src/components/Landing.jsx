@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Footer from "./Footer";
 
 // Landing page pubblica
 const Landing = () => {
@@ -127,6 +128,8 @@ const Landing = () => {
           />
         </div>
       </section>
+
+      <Footer />
     </>
   );
 };
