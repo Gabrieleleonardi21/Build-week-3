@@ -10,27 +10,17 @@ import Home from "./components/Home";
 import PremiumToast from "./components/PremiumToast";
 
 function App() {
-  // Voce di nav attiva, condivisa tra Header e FooterNav via context
   const [attiva, setAttiva] = useState("home");
 
   return (
-<<<<<<< HEAD
-    <>
-      <PremiumToast />
-=======
     <NavAttivaContext.Provider value={{ attiva, setAttiva }}>
->>>>>>> main
+      <PremiumToast />
       <Routes>
-        {/* Landing pubblica; il feed (Home) vive su /home */}
         <Route path="/" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
       </Routes>
-<<<<<<< HEAD
-    </>
-=======
     </NavAttivaContext.Provider>
->>>>>>> main
   );
 }
 
