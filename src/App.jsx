@@ -1,34 +1,19 @@
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap-icons/font/bootstrap-icons.css"
-import { Container, Row, Col } from "react-bootstrap"
-import './App.css'
-import './feed.css'
-import Header from './components/Header'
-import ProfileCard from './components/ProfileCard'
-import Feed from './components/Feed'
-import NewsCard from './components/NewsCard'
+import { Routes, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "./App.css";
+import Landing from "./components/Landing";
+import Register from "./components/Register";
 
-// Pagina home (feed) di LinkedIn: header in alto e layout a 3 colonne
-// (profilo · feed · notizie). Le colonne laterali si nascondono sotto lg.
 function App() {
+  const [attiva, setAttiva] = useState("home");
+
   return (
-    <>
-      <Header />
-      <Container className="mt-3">
-        <Row className="justify-content-center">
-          <Col lg={3} className="d-none d-lg-block">
-            <ProfileCard />
-          </Col>
-          <Col lg={6}>
-            <Feed />
-          </Col>
-          <Col lg={3} className="d-none d-lg-block">
-            <NewsCard />
-          </Col>
-        </Row>
-      </Container>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/register" element={<Register />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
