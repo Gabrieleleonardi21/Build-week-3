@@ -6,7 +6,8 @@ import Landing from "./components/Landing";
 import Register from "./components/Register";
 
 function App() {
-  const [attiva, setAttiva] = useState("home");
+  // Da controllare con gli altri: useState non importato, non usato in questo file (crasha la pagina)
+  // const [attiva, setAttiva] = useState("home");
 
   return (
     <Routes>
