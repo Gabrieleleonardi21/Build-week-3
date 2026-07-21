@@ -15,7 +15,7 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
         e.preventDefault();
         onClick(e);
       }}
-      className="px-3 d-flex flex-column align-items-center userToggle"
+      className="px-3 d-flex flex-column align-items-center userToggle dropdown"
     >
       <img src={AVATAR} alt="foto profilo" className="icon rounded-circle" />
       <p className="p-0 m-0 d-flex align-items-center gap-1">
@@ -33,7 +33,7 @@ function DropdownUser() {
     <Dropdown align="end">
       <Dropdown.Toggle as={UserToggle} id="user-dropdown" />
 
-      <Dropdown.Menu className="userMenu">
+      <Dropdown.Menu className="userMenu dropdownCentrato">
         <div className="px-3 pt-2 d-flex gap-2">
           <img
             src={AVATAR}
@@ -41,7 +41,7 @@ function DropdownUser() {
             className="rounded-circle userMenu-avatar"
           />
           <div>
-            <p className="userMenu-name m-0">simone pierantozzi</p>
+            <p className="userMenu-name m-0">Gabriele Leonardi</p>
             <p className="userMenu-sub m-0">--</p>
           </div>
         </div>

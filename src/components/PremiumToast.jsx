@@ -4,8 +4,11 @@ function PremiumToast() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 4000);
-    return () => clearTimeout(timer);
+    function handleShowToast() {
+      setShow(true);
+    }
+    window.addEventListener('showPremiumToast', handleShowToast);
+    return () => window.removeEventListener('showPremiumToast', handleShowToast);
   }, []);
 
   if (!show) return null;
@@ -26,7 +29,9 @@ function PremiumToast() {
       <div className="toast-body">
         Prova Premium gratis per 1 mese e sblocca funzionalità esclusive!
         <div className="mt-2">
-          <button className="btn btn-sm btn-warning text-white">Prova ora</button>
+          <button className="btn btn-sm btn-warning text-white" onClick={() => setShow(false)}>
+            Prova ora
+          </button>
         </div>
       </div>
     </div>

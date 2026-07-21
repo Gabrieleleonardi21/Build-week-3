@@ -65,6 +65,11 @@ function Sidebar() {
     setActiveModal('experience');
   }
 
+  function handlePremiumClick(e) {
+    e.preventDefault();
+    window.dispatchEvent(new Event('showPremiumToast'));
+  }
+
   return (
     <div className="sidebar-fixed d-flex flex-column gap-2">
       <div className="card border-0 shadow-sm">
@@ -96,7 +101,7 @@ function Sidebar() {
 
         <div className="px-3 pt-2 pb-3">
           <h6 className="mb-0 fw-bold" style={{ fontSize: '1.05rem' }}>
-            pippo pluto e paperino
+            Nicole Paulino
           </h6>
           <p className="small text-muted mb-1">
             {experiences.length > 0 ? experiences[experiences.length - 1].titolo : '--'}
@@ -134,7 +139,12 @@ function Sidebar() {
         </p>
         <div className="d-flex align-items-center gap-2">
           <span style={{ fontSize: '1.1rem' }}>🏅</span>
-          <a href="#" className="small fw-semibold text-decoration-none" style={{ color: '#0a66c2' }}>
+          
+             <a> href="#"
+            className="small fw-semibold text-decoration-none"
+            style={{ color: '#0a66c2' }}
+            onClick={handlePremiumClick}
+        
             Prova 1 mese per 0 €
           </a>
         </div>
