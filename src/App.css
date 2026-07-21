@@ -87,6 +87,8 @@
 
 .icon {
      width: 20px;
+     height: 20px;
+     object-fit: cover;
 }
 
 .iconContainer {
@@ -256,6 +258,7 @@ a {
     height: 60px;
     width: auto;
 }
+
 
 /* spazio per non far coprire il fondo pagina dalla barra */
 @media (max-width: 991.98px) {
