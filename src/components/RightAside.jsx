@@ -6,7 +6,7 @@ import Footer from "./Footer"
 
 function RightAside() {
   return (
-    <aside className="col-12 col-md-4 ms-md-auto d-flex flex-column gap-3 pt-5 ps-3 pe-5">
+    <aside className="d-flex flex-column gap-3">
       <News />
       <Puzzle />
       <Banner />
