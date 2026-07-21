@@ -9,6 +9,7 @@ import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import PremiumToast from "./components/PremiumToast";
+import Profile from "./components/Profile";
 
 function App() {
   const [attiva, setAttiva] = useState("home");
@@ -21,6 +22,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </NavAttivaContext.Provider>
   );
