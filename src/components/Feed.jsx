@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import '../feed.css'
-import CreatePost from './CreatePost'
-import Post from './Post'
-import { isFirebaseConfigured } from '../firebase'
+import { useEffect, useState } from "react";
+import "../feed.css";
+import CreatePost from "./CreatePost";
+import Post from "./Post";
+import { isFirebaseConfigured } from "../firebase";
 import {
   CURRENT_USER,
   subscribeFeed,
