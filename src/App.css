@@ -1,32 +1,116 @@
 .logo {
-    width: 40px;
+    width: 35px;
+    height: 35px;
 }
 
 #search {
     border-radius: 16px;
     border: 0.5px solid rgb(167, 167, 167);
-    min-width: 300px;
+    max-width: 260px;
     margin-left: 10px;
+    height: 35px;
+    padding-left: 12px;
 }
 
 .icon {
-     width: 25px;
+     width: 20px;
 }
 
 .iconContainer {
     opacity: 0.65;
+    text-decoration: none;
+    font-size: 12px;
+    /* bordo trasparente: la voce attiva lo colora senza spostare il layout */
+    border-bottom: 2px solid transparent;
 }
 
 .iconContainer:hover {
     opacity: 1;
 }
 
-p, a {
-    font-size: 12px;
-    text-decoration: none;
+.iconAttiva {
+    opacity: 1;
+    border-bottom-color: black;
+}
+
+p {
     color: black;
+    text-decoration: none;
+    font-size: 12px;
 }
 
 .user {
-    width: 25px;
+    width: 20px;
+}
+
+a {
+    color: #915907;
+    font-size: 12px;
+}
+
+.dropdown {
+    text-decoration: none;
+}
+
+/* Menu a tendina delle icone (solo sotto md): voci in riga, icona + testo */
+.iconMenu {
+    padding: 8px 0;
+    min-width: 200px;
+}
+
+.iconMenu .iconContainer {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 16px !important;
+    opacity: 1;
+}
+
+.iconMenu .iconContainer:hover {
+    background-color: #f3f2ef;
+}
+
+/* Fino a lg il campo di ricerca resta chiuso: si vede solo la lente */
+@media (max-width: 991.98px) {
+    #search {
+        display: none;
+    }
+
+    /* aperto occupa lo spazio libero, senza allargare la pagina */
+    #search.searchAperto {
+        display: block;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        margin-left: 0;
+        margin-right: 4px;
+    }
+}
+
+/* necessaria perche' un flex item di default non scende sotto la sua
+   larghezza minima: senza questa l'header sborderebbe in orizzontale */
+.minWidth0 {
+    min-width: 0;
+}
+
+.join-btn:hover {
+    background-color: #F1F7FF;
+    color: #4876A7;
+    border-color: #4876A7;
+}
+
+.signin-btn {
+    background-color: #0966C2;
+    border-color: #0966C2;
+}
+
+.signin-btn:hover {
+    background-color: #004182;
+    border-color: #004182;
+}
+
+.logo-esteso {
+    height: 60px;
+    width: auto;
 }
