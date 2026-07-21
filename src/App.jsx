@@ -8,6 +8,7 @@ import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Home from "./components/Home";
+import Profile from "./components/Profile";
 
 function App() {
   // Voce di nav attiva, condivisa tra Header e FooterNav via context
@@ -21,6 +22,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </NavAttivaContext.Provider>
   );
