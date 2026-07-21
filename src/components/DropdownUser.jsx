@@ -41,7 +41,7 @@ function DropdownUser() {
             className="rounded-circle userMenu-avatar"
           />
           <div>
-            <p className="userMenu-name m-0">simone pierantozzi</p>
+            <p className="userMenu-name m-0">Gabriele Leonardi</p>
             <p className="userMenu-sub m-0">--</p>
           </div>
         </div>
