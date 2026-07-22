@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useAuth } from "@/features/auth/auth-context";
+import "@/features/feed/feed.css";
 import {
   ExperienceModal,
   SavedItemsModal,
@@ -57,6 +58,15 @@ function Sidebar() {
     localStorage.setItem("profileExperiences", JSON.stringify(updated));
     setActiveModal(null);
     setEditingIndex(null);
+  }
+  
+/* Rimozione esperienza senza aprire modale */
+
+  function handleRemoveExperience(e, index) {
+    e.stopPropagation();
+    const updated = experiences.filter((_, i) => i !== index);
+    setExperiences(updated);
+    localStorage.setItem("profileExperiences", JSON.stringify(updated));
   }
 
   function handleAddClick() {
@@ -136,12 +146,32 @@ function Sidebar() {
               {experiences.map((exp, i) => (
                 <div
                   key={i}
-                  className="small text-muted border-top pt-1 mt-1"
+                  className="small text-muted border-top pt-1 mt-1 d-flex justify-content-between align-items-start"
                   style={{ cursor: "pointer" }}
                   onClick={() => handleEditClick(i)}
                 >
-                  <strong>{exp.titolo}</strong>
-                  {exp.azienda && <> · {exp.azienda}</>}
+                  <div>
+                    <strong>{exp.titolo}</strong>
+                    {exp.azienda && <> · {exp.azienda}</>}
+                    {exp.meseInizio && exp.annoInizio && (
+                      <div>
+                        {exp.meseInizio} {exp.annoInizio} –{" "}
+                        {exp.attuale
+                          ? "presente"
+                          : exp.meseFine && exp.annoFine
+                            ? `${exp.meseFine} ${exp.annoFine}`
+                            : "?"}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="experience-remove-btn"
+                    aria-label="Rimuovi esperienza"
+                    onClick={(e) => handleRemoveExperience(e, i)}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
