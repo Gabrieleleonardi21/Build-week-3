@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useAuth } from "@/features/auth/auth-context";
 import {
   ExperienceModal,
   SavedItemsModal,
@@ -8,6 +9,9 @@ import {
 } from "@/features/feed/SidebarModals";
 
 function Sidebar() {
+  // nome e cognome dell'utente loggato (impostati alla registrazione)
+  const { nomeCompleto } = useAuth();
+  const nomeMostrato = nomeCompleto || "Utente";
   const [activeModal, setActiveModal] = useState(null);
   // stato inizializzato direttamente da localStorage: niente setState nell'effect
   const [avatar, setAvatar] = useState(() =>
@@ -86,7 +90,9 @@ function Sidebar() {
           <img
             src={
               avatar ||
-              "https://ui-avatars.com/api/?name=Nicole+Paulino&background=6c8faf&color=fff"
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                nomeMostrato
+              )}&background=6c8faf&color=fff`
             }
             alt="Avatar utente"
             className="rounded-circle border border-white border-3"
@@ -109,7 +115,7 @@ function Sidebar() {
 
         <div className="px-3 pt-2 pb-3">
           <h6 className="mb-0 fw-bold" style={{ fontSize: "1.05rem" }}>
-            pippo pluto e paperinooo
+            {nomeMostrato}
           </h6>
           <p className="small text-muted mb-1">
             {experiences.length > 0

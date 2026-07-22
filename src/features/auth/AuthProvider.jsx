@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { AuthContext } from "@/features/auth/auth-context";
@@ -13,6 +14,9 @@ import { AuthContext } from "@/features/auth/auth-context";
 // l'app resta usabile senza login, coerentemente con isFirebaseConfigured.
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  // Nome e cognome tenuti a parte: l'oggetto User di Firebase e' mutato in
+  // place da updateProfile, quindi cambiarlo non farebbe ri-renderizzare.
+  const [nomeCompleto, setNomeCompleto] = useState("");
   // se Firebase non è configurato non c'è nulla da attendere: loading parte false
   const [loading, setLoading] = useState(Boolean(auth));
 
@@ -21,17 +25,31 @@ function AuthProvider({ children }) {
     // ascolta login/logout e mantiene sincronizzato l'utente corrente
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
+      setNomeCompleto(u?.displayName || "");
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
+  // Registrazione: dopo aver creato l'account salva nome e cognome nel
+  // displayName, cosi' l'app puo' mostrarli al posto dell'email.
+  async function signup(email, password, nome = "", cognome = "") {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const displayName = `${nome} ${cognome}`.trim();
+    if (displayName) {
+      await updateProfile(cred.user, { displayName });
+      setNomeCompleto(displayName);
+    }
+    return cred;
+  }
+
   const value = {
     user,
     loading,
+    // nome e cognome se impostati, altrimenti la parte prima della @
+    nomeCompleto: nomeCompleto || user?.email?.split("@")[0] || "",
     enabled: Boolean(auth), // true solo se Firebase è configurato
-    signup: (email, password) =>
-      createUserWithEmailAndPassword(auth, email, password),
+    signup,
     login: (email, password) =>
       signInWithEmailAndPassword(auth, email, password),
     logout: () => signOut(auth),

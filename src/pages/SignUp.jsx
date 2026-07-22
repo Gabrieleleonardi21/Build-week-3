@@ -7,6 +7,8 @@ import { useAuth, authErrorMessage } from "@/features/auth/auth-context";
 const SignUp = () => {
   const navigate = useNavigate();
   const { signup, enabled } = useAuth();
+  const [nome, setNome] = useState("");
+  const [cognome, setCognome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +26,7 @@ const SignUp = () => {
     setError("");
     setSubmitting(true);
     try {
-      await signup(email, password);
+      await signup(email, password, nome, cognome);
       navigate("/home");
     } catch (err) {
       setError(authErrorMessage(err.code));
@@ -51,6 +53,35 @@ const SignUp = () => {
 
         <div className="bg-white rounded-3 shadow-sm p-4">
           <form onSubmit={handleSubmit}>
+            <div className="d-flex gap-2 mb-3">
+              <div className="flex-fill">
+                <label htmlFor="nome" className="fw-bold small d-block mb-1">
+                  Nome
+                </label>
+                <input
+                  id="nome"
+                  type="text"
+                  className="form-control"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex-fill">
+                <label htmlFor="cognome" className="fw-bold small d-block mb-1">
+                  Cognome
+                </label>
+                <input
+                  id="cognome"
+                  type="text"
+                  className="form-control"
+                  value={cognome}
+                  onChange={(e) => setCognome(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
             <label htmlFor="email" className="fw-bold small d-block mb-1">
               Email
             </label>
