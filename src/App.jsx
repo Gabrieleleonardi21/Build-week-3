@@ -14,6 +14,7 @@ const SignUp = lazy(() => import("@/pages/SignUp"));
 const Login = lazy(() => import("@/pages/Login"));
 const Home = lazy(() => import("@/pages/Home"));
 const Profile = lazy(() => import("@/pages/Profile"));
+const Jobs = lazy(() => import("@/pages/Jobs"));
 const Placeholder = lazy(() => import("@/pages/Placeholder"));
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
                 path="/rete"
                 element={<Placeholder titolo="La mia rete" />}
               />
-              <Route path="/lavoro" element={<Placeholder titolo="Lavoro" />} />
+              <Route path="/lavoro" element={<Jobs />} />
               <Route
                 path="/messaggi"
                 element={<Placeholder titolo="Messaggistica" />}
