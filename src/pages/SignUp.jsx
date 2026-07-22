@@ -11,6 +11,7 @@ const SignUp = () => {
   const [cognome, setCognome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -35,7 +36,10 @@ const SignUp = () => {
   }
 
   return (
-    <div className="min-vh-100" style={{ backgroundColor: "#f3f2ef" }}>
+    <div
+      className="min-vh-100 d-flex flex-column"
+      style={{ backgroundColor: "#f3f2ef" }}
+    >
       <div className="px-5 py-4">
         <img
           src="/logo_esteso_LinkedIn.png"
@@ -44,7 +48,7 @@ const SignUp = () => {
         />
       </div>
 
-      <div className="mx-auto" style={{ maxWidth: "500px" }}>
+      <div className="mx-auto flex-grow-1" style={{ maxWidth: "500px" }}>
         <h1 className="fw-normal mb-4">Join LinkedIn now — it's free!</h1>
 
         <div className="bg-white rounded-3 shadow-sm p-4">
@@ -96,15 +100,16 @@ const SignUp = () => {
             <div className="position-relative mb-3">
               <input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <a
-                href="#"
-                className="text-primary fw-bold small text-decoration-none"
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="btn btn-link text-primary fw-bold small text-decoration-none p-0"
                 style={{
                   position: "absolute",
                   right: "12px",
@@ -112,8 +117,8 @@ const SignUp = () => {
                   transform: "translateY(-50%)",
                 }}
               >
-                Show
-              </a>
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
 
             <div className="form-check mb-3">

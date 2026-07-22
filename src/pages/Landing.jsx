@@ -4,9 +4,9 @@ import LandingFooter from "@/layout/LandingFooter";
 // Landing page pubblica
 const Landing = () => {
   return (
-    <>
+    <div className="min-vh-100 d-flex flex-column">
       <div
-        className="d-flex justify-content-between align-items-center px-5 py-3 mx-auto"
+        className="d-flex justify-content-between align-items-center px-5 py-3 mx-auto w-100"
         style={{ maxWidth: "1200px" }}
       >
         <img
@@ -73,7 +73,7 @@ const Landing = () => {
       </div>
 
       <section
-        className="d-flex align-items-center px-5 py-5 mx-auto"
+        className="d-flex align-items-center px-5 py-5 mx-auto flex-grow-1 w-100"
         style={{ maxWidth: "1200px" }}
       >
         <div className="w-50" style={{ maxWidth: "500px" }}>
@@ -95,21 +95,21 @@ const Landing = () => {
             Continue with Google
           </Link>
 
-          <div className="border rounded-4 d-flex align-items-center justify-content-between p-3 mb-4">
+          <Link
+            to="/login"
+            className="border rounded-4 d-flex align-items-center justify-content-between p-3 mb-4 text-decoration-none text-body"
+          >
             <div className="d-flex align-items-center gap-2">
-              <img
-                src="/Logo.png"
-                alt="Valentina"
-                className="rounded-circle"
+              <span
+                className="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
                 style={{ width: "40px", height: "40px" }}
-              />
-              <div>
-                <p className="fw-bold m-0">Sign in as Valentina</p>
-                <p className="text-muted small m-0">v*****@hotmail.it</p>
-              </div>
+              >
+                <i className="bi bi-person-fill text-muted"></i>
+              </span>
+              <p className="fw-bold m-0">Sign in with your credentials</p>
             </div>
             <i className="bi bi-envelope"></i>
-          </div>
+          </Link>
 
           <p className="small text-muted mb-4">
             By clicking &ldquo;Continue&rdquo; to join or sign in, you agree to
@@ -138,7 +138,7 @@ const Landing = () => {
       </section>
 
       <LandingFooter />
-    </>
+    </div>
   );
 };
 
