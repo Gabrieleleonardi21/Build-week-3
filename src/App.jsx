@@ -1,51 +1,65 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import "./App.css";
-import Landing from "./components/Landing";
-import SignUp from "./components/SignUp";
-import Login from "./components/Login";
-import Layout from "./components/Layout";
-import Home from "./components/Home";
-import Profile from "./components/Profile";
-import Placeholder from "./components/Placeholder";
-import PremiumToast from "./components/PremiumToast";
-import RequireAuth from "./components/RequireAuth";
-import PublicOnly from "./components/PublicOnly";
+import "@/App.css";
+import Layout from "@/layout/Layout";
+import PremiumToast from "@/ui/PremiumToast";
+import RequireAuth from "@/features/auth/RequireAuth";
+import PublicOnly from "@/features/auth/PublicOnly";
+
+// Pagine caricate on-demand (code-splitting): alleggeriscono il bundle iniziale
+const Landing = lazy(() => import("@/pages/Landing"));
+const SignUp = lazy(() => import("@/pages/SignUp"));
+const Login = lazy(() => import("@/pages/Login"));
+const Home = lazy(() => import("@/pages/Home"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const Placeholder = lazy(() => import("@/pages/Placeholder"));
 
 function App() {
   return (
     <>
       {/* Toast globale Premium: ascolta l'evento showPremiumToast */}
       <PremiumToast />
-      <Routes>
-        {/* Landing pubblica, sempre accessibile */}
-        <Route path="/" element={<Landing />} />
+      <Suspense fallback={null}>
+        <Routes>
+          {/* Landing pubblica, sempre accessibile */}
+          <Route path="/" element={<Landing />} />
 
-        {/* Solo per non autenticati: se sei loggato vieni mandato a /home */}
-        <Route element={<PublicOnly />}>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-        </Route>
-
-        {/* Pagine protette: richiedono il login */}
-        <Route element={<RequireAuth />}>
-          {/* Profile ha gia' header/footer propri: rotta autonoma */}
-          <Route path="/profile" element={<Profile />} />
-
-          {/* Il resto delle pagine app condivide header + footer tramite il Layout */}
-          <Route element={<Layout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/rete" element={<Placeholder titolo="La mia rete" />} />
-            <Route path="/lavoro" element={<Placeholder titolo="Lavoro" />} />
-            <Route path="/messaggi" element={<Placeholder titolo="Messaggistica" />} />
-            <Route path="/notifiche" element={<Placeholder titolo="Notifiche" />} />
+          {/* Solo per non autenticati: se sei loggato vieni mandato a /home */}
+          <Route element={<PublicOnly />}>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
           </Route>
-        </Route>
 
-        {/* URL sconosciuti: torna alla landing */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Pagine protette: richiedono il login */}
+          <Route element={<RequireAuth />}>
+            {/* Profile ha gia' header/footer propri: rotta autonoma */}
+            <Route path="/profile" element={<Profile />} />
+
+            {/* Il resto delle pagine app condivide header + footer tramite il Layout */}
+            <Route element={<Layout />}>
+              <Route path="/home" element={<Home />} />
+              <Route
+                path="/rete"
+                element={<Placeholder titolo="La mia rete" />}
+              />
+              <Route path="/lavoro" element={<Placeholder titolo="Lavoro" />} />
+              <Route
+                path="/messaggi"
+                element={<Placeholder titolo="Messaggistica" />}
+              />
+              <Route
+                path="/notifiche"
+                element={<Placeholder titolo="Notifiche" />}
+              />
+            </Route>
+          </Route>
+
+          {/* URL sconosciuti: torna alla landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }
