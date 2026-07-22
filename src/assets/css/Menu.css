@@ -1,110 +1,110 @@
 .menuToggle-grid {
-    font-size: 20px;
-    line-height: 1;
-    color: rgb(0 0 0 / 0.6);
+  font-size: 20px;
+  line-height: 1;
+  color: rgb(0 0 0 / 0.6);
 }
 
 .aziendeMenu {
-    --bs-dropdown-border-radius: 8px;
-    --bs-dropdown-padding-y: 0;
-    width: 640px;
-    padding: 8px 0;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  --bs-dropdown-border-radius: 8px;
+  --bs-dropdown-padding-y: 0;
+  width: 640px;
+  padding: 8px 0;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
 }
 
 .aziendeMenu-col {
-    flex: 1;
-    padding: 12px 20px;
+  flex: 1;
+  padding: 12px 20px;
 }
 
 /* sotto i 768px il menu a 640px usciva dallo schermo: lo si stringe alla
    larghezza della finestra e si impilano le due colonne */
 @media (max-width: 767.98px) {
-    .aziendeMenu {
-        width: calc(100vw - 16px);
-        max-width: 640px;
-    }
+  .aziendeMenu {
+    width: calc(100vw - 16px);
+    max-width: 640px;
+  }
 
-    .aziendeMenu-righe {
-        flex-direction: column;
-    }
+  .aziendeMenu-righe {
+    flex-direction: column;
+  }
 
-    .aziendeMenu-col--sx {
-        border-right: 0;
-        border-bottom: 1px solid rgb(0 0 0 / 0.12);
-    }
+  .aziendeMenu-col--sx {
+    border-right: 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.12);
+  }
 }
 
 /* la linea verticale che separa le due colonne */
 .aziendeMenu-col--sx {
-    border-right: 1px solid rgb(0 0 0 / 0.12);
+  border-right: 1px solid rgb(0 0 0 / 0.12);
 }
 
 .aziendeMenu-titolo {
-    font-size: 17px;
-    font-weight: 400;
-    margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 400;
+  margin: 0 0 12px;
 }
 
 .aziendeMenu-sezione {
-    font-size: 13px;
-    color: rgb(0 0 0 / 0.6);
-    margin: 14px 0 6px;
+  font-size: 13px;
+  color: rgb(0 0 0 / 0.6);
+  margin: 14px 0 6px;
 }
 
 /* App.css ha "p, a { font-size: 12px; color: black }": qui servono
    selettori di classe per sovrascriverlo senza !important. */
 .aziendeMenu-app {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 0;
-    font-size: 14px;
-    color: rgb(0 0 0 / 0.9);
-    text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: rgb(0 0 0 / 0.9);
+  text-decoration: none;
 }
 
 .aziendeMenu-app:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .aziendeMenu-icona {
-    font-size: 18px;
-    color: #0a66c2;
-    width: 24px;
-    text-align: center;
+  font-size: 18px;
+  color: #0a66c2;
+  width: 24px;
+  text-align: center;
 }
 
 .aziendeMenu-business {
-    display: flex;
-    flex-direction: column;
-    padding: 6px 0;
-    text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  text-decoration: none;
 }
 
 .aziendeMenu-business-testo {
-    font-size: 14px;
-    font-weight: 600;
-    color: rgb(0 0 0 / 0.9);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(0 0 0 / 0.9);
 }
 
 .aziendeMenu-business:hover .aziendeMenu-business-testo {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .aziendeMenu-business-sotto {
-    font-size: 12px;
-    color: rgb(0 0 0 / 0.6);
+  font-size: 12px;
+  color: rgb(0 0 0 / 0.6);
 }
 
 .aziendeMenu-hr {
-    margin: 12px 0;
-    opacity: 0.12;
+  margin: 12px 0;
+  opacity: 0.12;
 }
 
 .aziendeMenu-crea {
-    font-size: 14px;
-    font-weight: 600;
-    color: rgb(0 0 0 / 0.9);
-    text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(0 0 0 / 0.9);
+  text-decoration: none;
 }
