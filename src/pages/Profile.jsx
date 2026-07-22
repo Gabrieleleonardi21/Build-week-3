@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Header from "@/layout/Header";
 import FooterNav from "@/layout/FooterNav";
 import Card from "@/ui/Card";
 import ProfileImage from "@/ui/ProfileImage";
-import { getCurrentUser, processImage } from "@/lib/api";
+import { getCurrentUser, processImage, subscribeFeed } from "@/lib/api";
+import { timeAgo } from "@/lib/data";
 import ProfileAside from "./profile/ProfileAside";
 import {
   UnderConstructionModal,
@@ -90,6 +91,34 @@ function Profile() {
   const [languages, setLanguages] = useState(INITIAL_LANGUAGES);
   const [interests, setInterests] = useState(INITIAL_INTERESTS);
   const [causes, setCauses] = useState(INITIAL_CAUSES);
+
+  // Feed reale (stesso Realtime Database letto dalla Home): serve solo per
+  // ricavare "la tua" attività (post pubblicati, mi piace messi, commenti
+  // scritti). Ci si iscrive in sola lettura, nessuna scrittura da qui.
+  const [feedPosts, setFeedPosts] = useState([]);
+  useEffect(() => {
+    const unsubscribe = subscribeFeed(setFeedPosts);
+    return () => unsubscribe();
+  }, []);
+
+  const myPosts = feedPosts.filter((p) => p.author.name === u.name);
+  const likedPosts = feedPosts.filter((p) => p.likedByMe);
+  const myComments = feedPosts.flatMap((p) =>
+    p.comments
+      .filter((c) => c.author.name === u.name)
+      .map((c) => ({ ...c, post: p }))
+  );
+  // Non c'è modo di sapere "chi" ha condiviso un post (sharePost salva solo
+  // un contatore globale, non un elenco per utente): qui sommiamo le
+  // condivisioni ricevute sui post che hai pubblicato tu, non quelle fatte da te.
+  const sharesReceived = myPosts.reduce((sum, p) => sum + (p.shares || 0), 0);
+  // Post pubblicati + commenti scritti, in un'unica timeline in ordine
+  // cronologico inverso (i like non hanno un timestamp per utente nel DB,
+  // quindi restano fuori da questa lista ed elencati a parte).
+  const activityTimeline = [
+    ...myPosts.map((p) => ({ type: "post", createdAt: p.createdAt, post: p })),
+    ...myComments.map((c) => ({ type: "comment", createdAt: c.createdAt, comment: c })),
+  ].sort((a, b) => b.createdAt - a.createdAt);
 
   // Quale modale è aperta in questo momento. Invece di un booleano show per
   // ciascuna delle tante modali, si tiene una sola variabile per tipo, che
@@ -306,9 +335,58 @@ function Profile() {
                 </button>
               </div>
               <p className="text-muted small mb-3">
-                0 {t.followers}
+                0 {t.followers} · {myPosts.length} {t.postsPublished} ·{" "}
+                {likedPosts.length} {t.likesGiven} · {myComments.length} {t.commentsWritten} ·{" "}
+                {sharesReceived} {t.sharesReceived}
               </p>
-              <p className="text-muted small mb-0">{t.noPosts}</p>
+
+              {activityTimeline.length === 0 && likedPosts.length === 0 && (
+                <p className="text-muted small mb-0">{t.noPosts}</p>
+              )}
+
+              {activityTimeline.slice(0, 8).map((item) => (
+                <div
+                  key={`${item.type}-${item.type === "post" ? item.post.id : item.comment.id}`}
+                  className="d-flex gap-2 border-bottom py-2"
+                >
+                  <i
+                    className={`bi ${item.type === "post" ? "bi-file-earmark-post" : "bi-chat-dots"} text-muted mt-1`}
+                  ></i>
+                  <div className="flex-grow-1">
+                    {item.type === "post" ? (
+                      <>
+                        <div className="small fw-bold">{t.youPosted}</div>
+                        <div className="small">
+                          {item.post.text || <span className="text-muted">—</span>}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="small fw-bold">
+                          {t.youCommented} {t.onPostBy} {item.comment.post.author.name}
+                        </div>
+                        <div className="small">"{item.comment.text}"</div>
+                      </>
+                    )}
+                    <div className="small text-muted">{timeAgo(item.createdAt)}</div>
+                  </div>
+                </div>
+              ))}
+
+              {likedPosts.length > 0 && (
+                <div className="mt-3">
+                  <div className="small fw-bold mb-2">{t.likedPosts}</div>
+                  {likedPosts.map((p) => (
+                    <div key={p.id} className="d-flex gap-2 border-bottom py-2">
+                      <i className="bi bi-hand-thumbs-up-fill text-primary mt-1"></i>
+                      <div className="small">
+                        <span className="fw-bold">{p.author.name}</span>
+                        {p.text ? `: ${p.text}` : ""}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
 
             <Card className="mb-3 p-3">
