@@ -1,6 +1,24 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
+const MESI = [
+  "Gennaio",
+  "Febbraio",
+  "Marzo",
+  "Aprile",
+  "Maggio",
+  "Giugno",
+  "Luglio",
+  "Agosto",
+  "Settembre",
+  "Ottobre",
+  "Novembre",
+  "Dicembre",
+];
+
+const ANNO_CORRENTE = new Date().getFullYear();
+const ANNI = Array.from({ length: 60 }, (_, i) => ANNO_CORRENTE - i);
+
 export function ExperienceModal({
   show,
   onHide,
@@ -12,6 +30,11 @@ export function ExperienceModal({
   const [azienda, setAzienda] = useState("");
   const [localita, setLocalita] = useState("");
   const [descrizione, setDescrizione] = useState("");
+  const [meseInizio, setMeseInizio] = useState("");
+  const [annoInizio, setAnnoInizio] = useState("");
+  const [meseFine, setMeseFine] = useState("");
+  const [annoFine, setAnnoFine] = useState("");
+  const [attuale, setAttuale] = useState(false);
 
   // Sincronizza i campi del form quando il modale si apre o cambia l'elemento
   // da modificare: uso legittimo di un effect (sync con prop esterna), quindi
@@ -24,11 +47,21 @@ export function ExperienceModal({
         setAzienda(initialData.azienda || "");
         setLocalita(initialData.localita || "");
         setDescrizione(initialData.descrizione || "");
+        setMeseInizio(initialData.meseInizio || "");
+        setAnnoInizio(initialData.annoInizio || "");
+        setMeseFine(initialData.meseFine || "");
+        setAnnoFine(initialData.annoFine || "");
+        setAttuale(initialData.attuale || false);
       } else {
         setTitolo("");
         setAzienda("");
         setLocalita("");
         setDescrizione("");
+        setMeseInizio("");
+        setAnnoInizio("");
+        setMeseFine("");
+        setAnnoFine("");
+        setAttuale(false);
       }
     }
   }, [show, initialData]);
@@ -36,7 +69,17 @@ export function ExperienceModal({
 
   function handleSubmit() {
     if (!titolo.trim() || !azienda.trim()) return;
-    onSave({ titolo, azienda, localita, descrizione });
+    onSave({
+      titolo,
+      azienda,
+      localita,
+      descrizione,
+      meseInizio,
+      annoInizio,
+      meseFine: attuale ? "" : meseFine,
+      annoFine: attuale ? "" : annoFine,
+      attuale,
+    });
   }
 
   return (
@@ -72,6 +115,74 @@ export function ExperienceModal({
             onChange={(e) => setAzienda(e.target.value)}
           />
         </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Data di inizio</Form.Label>
+          <div className="d-flex gap-2">
+            <Form.Select
+              value={meseInizio}
+              onChange={(e) => setMeseInizio(e.target.value)}
+            >
+              <option value="">Mese</option>
+              {MESI.map((mese) => (
+                <option key={mese} value={mese}>
+                  {mese}
+                </option>
+              ))}
+            </Form.Select>
+            <Form.Select
+              value={annoInizio}
+              onChange={(e) => setAnnoInizio(e.target.value)}
+            >
+              <option value="">Anno</option>
+              {ANNI.map((anno) => (
+                <option key={anno} value={anno}>
+                  {anno}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Check
+            type="checkbox"
+            id="esperienza-attuale"
+            label="Lavoro attualmente in questo ruolo"
+            checked={attuale}
+            onChange={(e) => setAttuale(e.target.checked)}
+          />
+        </Form.Group>
+
+        {!attuale && (
+          <Form.Group className="mb-3">
+            <Form.Label>Data di fine</Form.Label>
+            <div className="d-flex gap-2">
+              <Form.Select
+                value={meseFine}
+                onChange={(e) => setMeseFine(e.target.value)}
+              >
+                <option value="">Mese</option>
+                {MESI.map((mese) => (
+                  <option key={mese} value={mese}>
+                    {mese}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Select
+                value={annoFine}
+                onChange={(e) => setAnnoFine(e.target.value)}
+              >
+                <option value="">Anno</option>
+                {ANNI.map((anno) => (
+                  <option key={anno} value={anno}>
+                    {anno}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
+          </Form.Group>
+        )}
 
         <Form.Group className="mb-3">
           <Form.Label>Località</Form.Label>
