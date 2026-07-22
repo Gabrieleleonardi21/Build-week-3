@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   ExperienceModal,
   SavedItemsModal,
@@ -9,17 +9,17 @@ import {
 
 function Sidebar() {
   const [activeModal, setActiveModal] = useState(null);
-  const [avatar, setAvatar] = useState(null);
-  const [experiences, setExperiences] = useState([]);
+  // stato inizializzato direttamente da localStorage: niente setState nell'effect
+  const [avatar, setAvatar] = useState(() =>
+    localStorage.getItem("profileAvatar")
+  );
+  const [experiences, setExperiences] = useState(() => {
+    const saved = localStorage.getItem("profileExperiences");
+    if (saved) return JSON.parse(saved);
+    return [];
+  });
   const [editingIndex, setEditingIndex] = useState(null);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    const savedAvatar = localStorage.getItem("profileAvatar");
-    const savedExperiences = localStorage.getItem("profileExperiences");
-    if (savedAvatar) setAvatar(savedAvatar);
-    if (savedExperiences) setExperiences(JSON.parse(savedExperiences));
-  }, []);
 
   function handlePhotoChange(e) {
     const file = e.target.files[0];

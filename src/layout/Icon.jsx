@@ -1,11 +1,17 @@
 import { forwardRef } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import ChatIcon from "@/layout/ChatIcon";
-import HomeIcon from "@/layout/HomeIcon";
-import JobIcon from "@/layout/JobIcon";
-import NetworkIcon from "@/layout/NetworkIcon";
-import NotificationIcon from "@/layout/NotificationIcon";
+import NavIcon from "@/layout/NavIcon";
 import User from "@/layout/User";
+import { NAV_ITEMS } from "@/layout/navItems";
+
+// Ordine delle icone nell'header
+const ORDINE = [
+  NAV_ITEMS.home,
+  NAV_ITEMS.rete,
+  NAV_ITEMS.lavoro,
+  NAV_ITEMS.messaggi,
+  NAV_ITEMS.notifiche,
+];
 
 // Come in Menu/DropdownUser: toggle custom per impilare icona e scritta.
 const IconToggle = forwardRef(function IconToggle({ onClick }, ref) {
@@ -32,21 +38,17 @@ function Icon() {
       <Dropdown align="end" className="d-md-none">
         <Dropdown.Toggle as={IconToggle} id="menu-icone" />
         <Dropdown.Menu className="iconMenu">
-          <HomeIcon />
-          <NetworkIcon />
-          <JobIcon />
-          <ChatIcon />
-          <NotificationIcon />
+          {ORDINE.map((voce) => (
+            <NavIcon key={voce.to} {...voce} />
+          ))}
         </Dropdown.Menu>
       </Dropdown>
 
       {/* da md in su restano in linea come prima */}
       <div className="d-none d-md-flex align-items-center">
-        <HomeIcon />
-        <NetworkIcon />
-        <JobIcon />
-        <ChatIcon />
-        <NotificationIcon />
+        {ORDINE.map((voce) => (
+          <NavIcon key={voce.to} {...voce} />
+        ))}
       </div>
 
       <User />

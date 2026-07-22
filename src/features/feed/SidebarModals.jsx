@@ -13,6 +13,10 @@ export function ExperienceModal({
   const [localita, setLocalita] = useState("");
   const [descrizione, setDescrizione] = useState("");
 
+  // Sincronizza i campi del form quando il modale si apre o cambia l'elemento
+  // da modificare: uso legittimo di un effect (sync con prop esterna), quindi
+  // la regola set-state-in-effect (troppo severa qui) è disattivata.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (show) {
       if (initialData) {
@@ -28,6 +32,7 @@ export function ExperienceModal({
       }
     }
   }, [show, initialData]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function handleSubmit() {
     if (!titolo.trim() || !azienda.trim()) return;
