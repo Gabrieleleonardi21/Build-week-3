@@ -1,10 +1,17 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import "@/assets/css/DropdownUser.css";
 import { useAuth } from "@/features/auth/auth-context";
 
 const AVATAR = "https://i.pravatar.cc/150?img=12";
+
+// Stessa chiave usata dalla Sidebar quando salvi una nuova esperienza.
+function leggiEsperienze() {
+  const saved = localStorage.getItem("profileExperiences");
+  if (saved) return JSON.parse(saved);
+  return [];
+}
 
 // Toggle personalizzato: senza questo react-bootstrap applica le classi btn
 // e non si riesce a impilare avatar + scritta come nelle altre icone.
@@ -32,7 +39,19 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
 
 function DropdownUser() {
   const navigate = useNavigate();
-  const { logout, enabled } = useAuth();
+  // nome e cognome dell'utente loggato (impostati alla registrazione)
+  const { logout, enabled, nomeCompleto } = useAuth();
+  const nomeMostrato = nomeCompleto || "Utente";
+  // stesse esperienze salvate dalla Sidebar: mostriamo il titolo dell'ultima
+  const [experiences, setExperiences] = useState(leggiEsperienze);
+  const ultimaEsperienza =
+    experiences.length > 0 ? experiences[experiences.length - 1].titolo : "--";
+
+  // Il menu si apre dopo che la Sidebar ha già scritto in localStorage,
+  // quindi rileggiamo a ogni apertura per restare allineati.
+  function handleToggle(isOpen) {
+    if (isOpen) setExperiences(leggiEsperienze());
+  }
 
   // Logout reale con Firebase Auth, poi torna alla Landing pubblica.
   // Se l'auth è disabilitata (Firebase non configurato) fa solo il redirect.
@@ -42,7 +61,7 @@ function DropdownUser() {
   }
 
   return (
-    <Dropdown align="end">
+    <Dropdown align="end" onToggle={handleToggle}>
       <Dropdown.Toggle as={UserToggle} id="user-dropdown" />
 
       <Dropdown.Menu className="userMenu dropdownCentrato">
@@ -53,8 +72,8 @@ function DropdownUser() {
             className="rounded-circle userMenu-avatar"
           />
           <div>
-            <p className="userMenu-name m-0">Gabriele Leonardi</p>
-            <p className="userMenu-sub m-0">--</p>
+            <p className="userMenu-name m-0">{nomeMostrato}</p>
+            <p className="userMenu-sub m-0">{ultimaEsperienza}</p>
           </div>
         </div>
 
