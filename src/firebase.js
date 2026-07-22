@@ -3,6 +3,7 @@
 // NON committato). Vedi .env.example per l'elenco delle variabili.
 import { initializeApp } from 'firebase/app'
 import { getDatabase } from 'firebase/database'
+import { getAuth } from 'firebase/auth'
 
 const cfg = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -18,13 +19,15 @@ const cfg = {
 export const isFirebaseConfigured = Boolean(cfg.databaseURL)
 
 let db = null
+let auth = null
 if (isFirebaseConfigured) {
   const app = initializeApp(cfg)
   db = getDatabase(app)
+  auth = getAuth(app)
 } else {
   console.warn(
     'Firebase non configurato: copia .env.example in .env.local e inserisci le VITE_FIREBASE_*'
   )
 }
 
-export { db }
+export { db, auth }
