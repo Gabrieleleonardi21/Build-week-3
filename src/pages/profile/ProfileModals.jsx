@@ -21,7 +21,7 @@ export function UnderConstructionModal({ show, onHide, title }) {
 // Modale della sezione "About": un textarea per la bio + un elenco di tag
 // per le top skills. Le due cose sono legate (stessa sezione), quindi le
 // gestiamo in un'unica modale invece di riusare TagListModal a parte.
-export function AboutModal({ show, onHide, about, topSkills, onSave }) {
+export function AboutModal({ show, onHide, title, topSkillsLabel, about, topSkills, onSave }) {
   // Stato "di lavoro" interno alla modale: si parte da una copia dei dati
   // correnti e si scrive nel profilo vero solo al click su "Salva"
   // (così "Annulla"/chiudi non lascia modifiche a metà).
@@ -60,7 +60,7 @@ export function AboutModal({ show, onHide, about, topSkills, onSave }) {
   return (
     <Modal show={show} onHide={onHide} centered scrollable>
       <Modal.Header closeButton>
-        <Modal.Title>Informazioni</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Group className="mb-3">
@@ -73,7 +73,7 @@ export function AboutModal({ show, onHide, about, topSkills, onSave }) {
           />
         </Form.Group>
 
-        <Form.Label className="small fw-bold">Top skills</Form.Label>
+        <Form.Label className="small fw-bold">{topSkillsLabel}</Form.Label>
         {/* Ogni skill è un badge con una x per rimuoverla al volo */}
         <div className="d-flex flex-wrap gap-2 mb-2">
           {skills.map((s) => (
