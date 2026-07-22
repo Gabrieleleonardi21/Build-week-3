@@ -4,9 +4,9 @@ import LandingFooter from "@/layout/LandingFooter";
 // Landing page pubblica
 const Landing = () => {
   return (
-    <>
+    <div className="min-vh-100 d-flex flex-column">
       <div
-        className="d-flex justify-content-between align-items-center px-5 py-3 mx-auto"
+        className="d-flex justify-content-between align-items-center px-5 py-3 mx-auto w-100"
         style={{ maxWidth: "1200px" }}
       >
         <img
@@ -73,7 +73,7 @@ const Landing = () => {
       </div>
 
       <section
-        className="d-flex align-items-center px-5 py-5 mx-auto"
+        className="d-flex align-items-center px-5 py-5 mx-auto flex-grow-1 w-100"
         style={{ maxWidth: "1200px" }}
       >
         <div className="w-50" style={{ maxWidth: "500px" }}>
@@ -138,7 +138,7 @@ const Landing = () => {
       </section>
 
       <LandingFooter />
-    </>
+    </div>
   );
 };
 

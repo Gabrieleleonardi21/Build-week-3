@@ -9,6 +9,7 @@ const Login = () => {
   const { login, enabled } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -33,7 +34,10 @@ const Login = () => {
   }
 
   return (
-    <div className="min-vh-100" style={{ backgroundColor: "#f3f2ef" }}>
+    <div
+      className="min-vh-100 d-flex flex-column"
+      style={{ backgroundColor: "#f3f2ef" }}
+    >
       <div className="px-5 py-4">
         <img
           src="/logo_esteso_LinkedIn.png"
@@ -42,7 +46,7 @@ const Login = () => {
         />
       </div>
 
-      <div className="mx-auto" style={{ maxWidth: "500px" }}>
+      <div className="mx-auto flex-grow-1" style={{ maxWidth: "500px" }}>
         <div className="bg-white rounded-3 shadow-sm p-4">
           <h1 className="fw-bold mb-3">Sign in</h1>
 
@@ -112,21 +116,26 @@ const Login = () => {
             <div className="position-relative mb-2">
               <input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <i
-                className="bi bi-eye text-body"
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Nascondi password" : "Mostra password"}
+                className="btn btn-link p-0 text-body"
                 style={{
                   position: "absolute",
                   right: "12px",
                   top: "50%",
                   transform: "translateY(-50%)",
                 }}
-              ></i>
+              >
+                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+              </button>
             </div>
 
             <a
