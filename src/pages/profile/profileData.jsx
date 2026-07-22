@@ -56,10 +56,12 @@ export const INITIAL_INTERESTS = [
 
 export const INITIAL_CAUSES = ["Istruzione", "Scienza e tecnologia"];
 
-// Configurazione dei campi per l'EntryListModal, una per ogni sezione a voci strutturate
+// Configurazione dei campi per l'EntryListModal, una per ogni sezione a voci
+// strutturate. Il titolo mostrato nella modale non vive qui: arriva da
+// translations.js (stessa chiave), così segue la lingua scelta nel toggle
+// "Profile language".
 export const ENTRY_SECTIONS = {
   experience: {
-    title: "Esperienza",
     fields: [
       { key: "role", label: "Ruolo", placeholder: "es. Full Stack Developer", required: true },
       { key: "company", label: "Azienda", placeholder: "es. EPICODE", required: true },
@@ -77,7 +79,6 @@ export const ENTRY_SECTIONS = {
     ),
   },
   education: {
-    title: "Formazione",
     fields: [
       { key: "school", label: "Istituto", placeholder: "es. EPICODE Institute of Technology", required: true },
       { key: "degree", label: "Titolo di studio", placeholder: "es. Full Stack AI Developer" },
@@ -91,7 +92,6 @@ export const ENTRY_SECTIONS = {
     ),
   },
   projects: {
-    title: "Progetti",
     fields: [
       { key: "name", label: "Nome progetto", placeholder: "es. LinkedIn Clone", required: true },
       { key: "period", label: "Periodo", placeholder: "es. 2026" },
@@ -105,7 +105,6 @@ export const ENTRY_SECTIONS = {
     ),
   },
   languages: {
-    title: "Lingue",
     fields: [
       { key: "name", label: "Lingua", placeholder: "es. Francese", required: true },
       { key: "level", label: "Livello", placeholder: "es. Conoscenza elementare" },
@@ -118,7 +117,6 @@ export const ENTRY_SECTIONS = {
     ),
   },
   interests: {
-    title: "Interessi",
     fields: [
       { key: "name", label: "Nome", placeholder: "es. Frontend Weekly", required: true },
       { key: "followers", label: "Follower", placeholder: "es. 120k follower" },
@@ -131,7 +129,6 @@ export const ENTRY_SECTIONS = {
     ),
   },
   featured: {
-    title: "In evidenza",
     fields: [
       { key: "kind", label: "Tipo", placeholder: "es. Certification" },
       { key: "title", label: "Titolo", placeholder: "es. React - The Complete Guide", required: true },
@@ -145,11 +142,12 @@ export const ENTRY_SECTIONS = {
   },
 };
 
-// Configurazione per il TagListModal (sezioni fatte di semplici elenchi di testo)
+// Configurazione per il TagListModal (sezioni fatte di semplici elenchi di
+// testo). Anche qui il titolo arriva da translations.js, non da questo file.
 export const TAG_SECTIONS = {
-  skills: { title: "Competenze", placeholder: "Aggiungi una competenza" },
-  courses: { title: "Corsi", placeholder: "Aggiungi un corso" },
-  causes: { title: "Cause", placeholder: "Aggiungi una causa" },
+  skills: { placeholder: "Aggiungi una competenza" },
+  courses: { placeholder: "Aggiungi un corso" },
+  causes: { placeholder: "Aggiungi una causa" },
 };
 
 // Placeholder generici per la colonna laterale (nessun dato reale di terzi)

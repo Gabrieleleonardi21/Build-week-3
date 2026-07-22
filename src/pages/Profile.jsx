@@ -28,12 +28,12 @@ import {
   ENTRY_SECTIONS,
   TAG_SECTIONS,
 } from "./profile/profileData";
+import { PROFILE_TRANSLATIONS } from "./profile/translations";
 
 // Dati finti aggiuntivi, solo per questa pagina (non condivisi col resto dell'app)
 const EXTRA = {
   verified: true,
   connections: 227,
-  openTo: "Open to",
 };
 
 // Intestazione riutilizzata da ogni sezione: titolo + matita che apre la
@@ -64,6 +64,12 @@ function SectionHeader({ title, onEdit }) {
 // hardcoded che sostituiscono.
 function Profile() {
   const u = getCurrentUser();
+
+  // Lingua dell'interfaccia della pagina Profilo, pilotata dal toggle
+  // "Profile language" nell'aside (vedi ProfileAside). Vive qui perché serve
+  // sia al contenuto principale sia all'aside stesso.
+  const [language, setLanguage] = useState("English");
+  const t = PROFILE_TRANSLATIONS[language];
 
   // Immagine profilo e copertina: partono dall'utente corrente e possono
   // essere sostituite dall'utente tramite i due input file nascosti sotto.
@@ -191,85 +197,93 @@ function Profile() {
                 <p className="text-muted small mb-1">
                   {u.location} ·{" "}
                   <a href="#" className="fw-bold">
-                    Contact info
+                    {t.contactInfo}
                   </a>
                 </p>
                 <a href="#" className="fw-bold small d-inline-block mb-3">
-                  {EXTRA.connections} connections
+                  {EXTRA.connections} {t.connections}
                 </a>
 
                 <div className="d-flex flex-wrap gap-2">
                   <button
                     className="btn btn-primary rounded-pill fw-bold"
-                    onClick={() => setConstructionTitle(EXTRA.openTo)}
+                    onClick={() => setConstructionTitle(t.openTo)}
                   >
-                    {EXTRA.openTo}
+                    {t.openTo}
                   </button>
                   <button
                     className="btn btn-outline-primary rounded-pill fw-bold"
-                    onClick={() => setConstructionTitle("Add section")}
+                    onClick={() => setConstructionTitle(t.addSection)}
                   >
-                    Add section
+                    {t.addSection}
                   </button>
                   <button
                     className="btn btn-outline-secondary rounded-pill"
-                    onClick={() => setConstructionTitle("Enhance profile")}
+                    onClick={() => setConstructionTitle(t.enhanceProfile)}
                   >
-                    Enhance profile
+                    {t.enhanceProfile}
                   </button>
                   <button
                     className="btn btn-outline-secondary rounded-pill"
-                    onClick={() => setConstructionTitle("Resources")}
+                    onClick={() => setConstructionTitle(t.resources)}
                   >
-                    Resources
+                    {t.resources}
                   </button>
                 </div>
               </div>
             </Card>
 
             <Card className="mb-3 p-3">
-              <h2 className="h5 fw-bold mb-1">Analytics</h2>
+              <h2 className="h5 fw-bold mb-1">{t.analytics}</h2>
               <p className="text-muted small mb-3">
-                <i className="bi bi-eye me-1"></i>Private to you
+                <i className="bi bi-eye me-1"></i>
+                {t.privateToYou}
               </p>
               <div className="d-flex flex-wrap gap-4">
                 <div className="d-flex align-items-start gap-2">
                   <i className="bi bi-people-fill fs-5 mt-1"></i>
                   <div>
-                    <div className="fw-bold">{ANALYTICS.profileViews} profile views</div>
-                    <div className="small text-muted">Discover who's viewed your profile.</div>
+                    <div className="fw-bold">
+                      {ANALYTICS.profileViews} {t.profileViews}
+                    </div>
+                    <div className="small text-muted">{t.profileViewsHint}</div>
                   </div>
                 </div>
                 <div className="d-flex align-items-start gap-2">
                   <i className="bi bi-bar-chart-fill fs-5 mt-1"></i>
                   <div>
-                    <div className="fw-bold">{ANALYTICS.postImpressions} post impressions</div>
-                    <div className="small text-muted">Start a post to increase engagement.</div>
+                    <div className="fw-bold">
+                      {ANALYTICS.postImpressions} {t.postImpressions}
+                    </div>
+                    <div className="small text-muted">{t.postImpressionsHint}</div>
                   </div>
                 </div>
                 <div className="d-flex align-items-start gap-2">
                   <i className="bi bi-search fs-5 mt-1"></i>
                   <div>
-                    <div className="fw-bold">{ANALYTICS.searchAppearances} search appearances</div>
-                    <div className="small text-muted">See how often you appear in search results.</div>
+                    <div className="fw-bold">
+                      {ANALYTICS.searchAppearances} {t.searchAppearances}
+                    </div>
+                    <div className="small text-muted">{t.searchAppearancesHint}</div>
                   </div>
                 </div>
               </div>
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="About" onEdit={() => setAboutModalOpen(true)} />
+              <SectionHeader title={t.about} onEdit={() => setAboutModalOpen(true)} />
               <p className="mb-3">{about}</p>
               <div className="border rounded-3 p-3">
                 <div className="fw-bold small mb-2 d-flex align-items-center gap-2">
-                  <i className="bi bi-gem"></i>Top skills
+                  <i className="bi bi-gem"></i>
+                  {t.topSkills}
                 </div>
                 <div className="small">{topSkills.join(" · ")}</div>
               </div>
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="Featured" onEdit={() => setEntryModalKey("featured")} />
+              <SectionHeader title={t.featured} onEdit={() => setEntryModalKey("featured")} />
               <div className="d-flex flex-wrap gap-3">
                 {featured.map((f) => (
                   <div key={f.title} className="border rounded-3 p-3 flex-fill" style={{ minWidth: "160px" }}>
@@ -283,20 +297,22 @@ function Profile() {
 
             <Card className="mb-3 p-3">
               <div className="d-flex justify-content-between align-items-center mb-1">
-                <h2 className="h5 fw-bold mb-0">Activity</h2>
+                <h2 className="h5 fw-bold mb-0">{t.activity}</h2>
                 <button
                   className="btn btn-outline-primary rounded-pill btn-sm"
-                  onClick={() => setConstructionTitle("Crea un post")}
+                  onClick={() => setConstructionTitle(t.createAPost)}
                 >
-                  Create a post
+                  {t.createAPost}
                 </button>
               </div>
-              <p className="text-muted small mb-3">0 followers</p>
-              <p className="text-muted small mb-0">Ancora nessun post pubblicato.</p>
+              <p className="text-muted small mb-3">
+                0 {t.followers}
+              </p>
+              <p className="text-muted small mb-0">{t.noPosts}</p>
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="Experience" onEdit={() => setEntryModalKey("experience")} />
+              <SectionHeader title={t.experience} onEdit={() => setEntryModalKey("experience")} />
               {experience.map((e, i) => (
                 <div key={`${e.company}-${i}`} className="d-flex gap-3 mb-2">
                   <i className="bi bi-building fs-4"></i>
@@ -309,11 +325,11 @@ function Profile() {
                   </div>
                 </div>
               ))}
-              {experience.length === 0 && <p className="text-muted small mb-0">Nessuna esperienza aggiunta.</p>}
+              {experience.length === 0 && <p className="text-muted small mb-0">{t.noExperience}</p>}
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="Education" onEdit={() => setEntryModalKey("education")} />
+              <SectionHeader title={t.education} onEdit={() => setEntryModalKey("education")} />
               {education.map((ed, i) => (
                 <div key={`${ed.school}-${i}`} className="d-flex gap-3 mb-2">
                   <i className="bi bi-mortarboard fs-4"></i>
@@ -324,11 +340,11 @@ function Profile() {
                   </div>
                 </div>
               ))}
-              {education.length === 0 && <p className="text-muted small mb-0">Nessuna formazione aggiunta.</p>}
+              {education.length === 0 && <p className="text-muted small mb-0">{t.noEducation}</p>}
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="Projects" onEdit={() => setEntryModalKey("projects")} />
+              <SectionHeader title={t.projects} onEdit={() => setEntryModalKey("projects")} />
               {projects.map((p, i) => (
                 <div key={`${p.name}-${i}`} className="mb-2">
                   <div className="fw-bold">{p.name}</div>
@@ -336,11 +352,11 @@ function Profile() {
                   <div className="small">{p.description}</div>
                 </div>
               ))}
-              {projects.length === 0 && <p className="text-muted small mb-0">Nessun progetto aggiunto.</p>}
+              {projects.length === 0 && <p className="text-muted small mb-0">{t.noProjects}</p>}
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title={`Skills (${skills.length})`} onEdit={() => setTagModalKey("skills")} />
+              <SectionHeader title={`${t.skills} (${skills.length})`} onEdit={() => setTagModalKey("skills")} />
               <div className="d-flex flex-wrap gap-2">
                 {skills.map((s) => (
                   <span key={s} className="badge rounded-pill text-dark border fw-normal px-3 py-2">
@@ -351,7 +367,7 @@ function Profile() {
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title={`Courses (${courses.length})`} onEdit={() => setTagModalKey("courses")} />
+              <SectionHeader title={`${t.courses} (${courses.length})`} onEdit={() => setTagModalKey("courses")} />
               {courses.map((c, i) => (
                 <div key={c} className={i < courses.length - 1 ? "border-bottom pb-2 mb-2" : ""}>
                   {c}
@@ -360,7 +376,10 @@ function Profile() {
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title={`Languages (${languages.length})`} onEdit={() => setEntryModalKey("languages")} />
+              <SectionHeader
+                title={`${t.languages} (${languages.length})`}
+                onEdit={() => setEntryModalKey("languages")}
+              />
               {languages.map((l, i) => (
                 <div key={`${l.name}-${i}`} className={i < languages.length - 1 ? "border-bottom pb-2 mb-2" : ""}>
                   <div className="fw-bold">{l.name}</div>
@@ -370,7 +389,7 @@ function Profile() {
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="Interests" onEdit={() => setEntryModalKey("interests")} />
+              <SectionHeader title={t.interests} onEdit={() => setEntryModalKey("interests")} />
               <div className="d-flex flex-wrap gap-3">
                 {interests.map((it, i) => (
                   <div key={`${it.name}-${i}`} className="d-flex align-items-center gap-2">
@@ -385,7 +404,7 @@ function Profile() {
             </Card>
 
             <Card className="mb-3 p-3">
-              <SectionHeader title="Causes" onEdit={() => setTagModalKey("causes")} />
+              <SectionHeader title={t.causes} onEdit={() => setTagModalKey("causes")} />
               <div className="d-flex flex-wrap gap-2">
                 {causes.map((c) => (
                   <span key={c} className="badge rounded-pill text-dark border fw-normal px-3 py-2">
@@ -397,7 +416,12 @@ function Profile() {
           </Col>
 
           <Col lg={4}>
-            <ProfileAside user={u} onConstruction={setConstructionTitle} />
+            <ProfileAside
+              user={u}
+              language={language}
+              onLanguageChange={setLanguage}
+              onConstruction={setConstructionTitle}
+            />
           </Col>
         </Row>
       </Container>
@@ -412,6 +436,8 @@ function Profile() {
       <AboutModal
         show={aboutModalOpen}
         onHide={() => setAboutModalOpen(false)}
+        title={t.about}
+        topSkillsLabel={t.topSkills}
         about={about}
         topSkills={topSkills}
         onSave={({ about: newAbout, topSkills: newTopSkills }) => {
@@ -424,7 +450,7 @@ function Profile() {
         <TagListModal
           show
           onHide={() => setTagModalKey(null)}
-          title={TAG_SECTIONS[tagModalKey].title}
+          title={t[tagModalKey]}
           placeholder={TAG_SECTIONS[tagModalKey].placeholder}
           items={tagData[tagModalKey]}
           onSave={tagSetters[tagModalKey]}
@@ -435,7 +461,7 @@ function Profile() {
         <EntryListModal
           show
           onHide={() => setEntryModalKey(null)}
-          title={ENTRY_SECTIONS[entryModalKey].title}
+          title={t[entryModalKey]}
           fields={ENTRY_SECTIONS[entryModalKey].fields}
           renderSummary={ENTRY_SECTIONS[entryModalKey].renderSummary}
           items={entryData[entryModalKey]}
