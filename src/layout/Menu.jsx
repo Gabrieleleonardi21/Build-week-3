@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import "@/assets/css/Menu.css";
-import Pubblicita from "@/ui/Pubblicta";
+import Pubblicita from "@/ui/Pubblicita";
 
 // Colonna sinistra: gruppi di scorciatoie con icona
 const APP_GROUPS = [

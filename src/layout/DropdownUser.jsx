@@ -27,7 +27,7 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
       className="px-3 d-flex flex-column align-items-center userToggle dropdown"
     >
       <img src={AVATAR} alt="foto profilo" className="icon rounded-circle" />
-      <p className="p-0 m-0 d-flex align-items-center gap-1">
+      <p className="p-0 m-0 d-flex align-items-center gap-1 userTu">
         Tu
         <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
           <path d="M3 5l5 6 5-6z" />
