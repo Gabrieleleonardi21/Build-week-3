@@ -1,3 +1,9 @@
+Ecco il file **`README.md` aggiornato**: ho trasformato tutti gli elementi dell'Indice in **link interni diretti (anchor links)**.
+
+Cliccando su una qualsiasi voce dell'indice, la pagina scorrerà automaticamente fino alla sezione corrispondente.
+
+---
+
 # 🚀 Build Week 3 — LinkedIn Clone
 
 > Un'applicazione web moderna che riproduce le funzionalità core di **LinkedIn** (Feed, Autenticazione, Profilo, Interazioni) basata su un **feed in tempo reale** alimentato da Firebase Realtime Database.
@@ -41,16 +47,16 @@
 
 ## 🛠️ Stack Tecnologico
 
-| Ambito                 | Tecnologia                                                                                                                                                     | Versione     |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| **Frontend Framework** | [React](https://www.google.com/search?q=https://react.dev/)                                                                                                    | `^19.0`      |
-| **Build Tool**         | [Vite](https://www.google.com/search?q=https://vitejs.dev/)                                                                                                    | `^8.0`       |
-| **Routing**            | [React Router DOM](https://www.google.com/search?q=https://reactrouter.com/)                                                                                   | `^7.0`       |
-| **UI & Stylings**      | [Bootstrap](https://www.google.com/search?q=https://getbootstrap.com/) / [React Bootstrap](https://www.google.com/search?q=https://react-bootstrap.github.io/) | `5` / `2.10` |
-| **Iconset**            | [Bootstrap Icons](https://www.google.com/search?q=https://icons.getbootstrap.com/)                                                                             | `1.13`       |
-| **Backend & DB**       | [Firebase Realtime Database](https://www.google.com/search?q=https://firebase.google.com/)                                                                     | `^12.0`      |
-| **Caroselli**          | [Swiper](https://www.google.com/search?q=https://swiperjs.com/)                                                                                                | `^14.0`      |
-| **Code Quality**       | [ESLint](https://www.google.com/search?q=https://eslint.org/)                                                                                                  | `^10.0`      |
+| Ambito                 | Tecnologia                                                                                     | Versione     |
+| ---------------------- | ---------------------------------------------------------------------------------------------- | ------------ |
+| **Frontend Framework** | [React](https://react.dev/)                                                                    | `^19.0`      |
+| **Build Tool**         | [Vite](https://vitejs.dev/)                                                                    | `^8.0`       |
+| **Routing**            | [React Router DOM](https://reactrouter.com/)                                                   | `^7.0`       |
+| **UI & Stylings**      | [Bootstrap](https://getbootstrap.com/) / [React Bootstrap](https://react-bootstrap.github.io/) | `5` / `2.10` |
+| **Iconset**            | [Bootstrap Icons](https://icons.getbootstrap.com/)                                             | `1.13`       |
+| **Backend & DB**       | [Firebase Realtime Database](https://firebase.google.com/)                                     | `^12.0`      |
+| **Caroselli**          | [Swiper](https://swiperjs.com/)                                                                | `^14.0`      |
+| **Code Quality**       | [ESLint](https://eslint.org/)                                                                  | `^10.0`      |
 
 ---
 
@@ -192,7 +198,7 @@ Tutte le operazioni I/O verso Firebase sono isolate in `src/api.js`.
 ### Sicurezza e Trattamento Immagini
 
 - **Anti-XSS:** I link immagine vengono sottoposti alla funzione `sanitizeImage()` per prevenire execution di script malevoli (es. protocolli `javascript:`).
-- **Ottimizzazione Client-side:** `processImage()` ridimensiona le immagini caricate dall'utente prima dell'invio sul DB (max $1080\text{px}$, qualità $80\%$).
+- **Ottimizzazione Client-side:** `processImage()` ridimensiona le immagini caricate dall'utente prima dell'invio sul DB (max 1080px, qualità 80%).
 
 ---
 

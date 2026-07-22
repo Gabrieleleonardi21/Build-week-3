@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../assets/css/DropdownUser.css";
+import { useAuth } from "../auth-context";
 
 const AVATAR = "https://i.pravatar.cc/150?img=12";
 
@@ -31,10 +32,12 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
 
 function DropdownUser() {
   const navigate = useNavigate();
+  const { logout, enabled } = useAuth();
 
-  // Per ora non c'è ancora un vero backend di autenticazione:
-  // il logout riporta alla Landing pubblica
-  function handleLogout() {
+  // Logout reale con Firebase Auth, poi torna alla Landing pubblica.
+  // Se l'auth è disabilitata (Firebase non configurato) fa solo il redirect.
+  async function handleLogout() {
+    if (enabled) await logout();
     navigate("/");
   }
 

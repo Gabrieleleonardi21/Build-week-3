@@ -1,18 +1,35 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LandingFooter from "./LandingFooter";
+import { useAuth, authErrorMessage } from "../auth-context";
 
 // Pagina di login
 const Login = () => {
   const navigate = useNavigate();
+  const { login, enabled } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  // Per ora non c'è ancora un vero backend di autenticazione:
-  // il login porta direttamente al feed
-  function handleSubmit(e) {
+  // Accesso con Firebase Auth (email/password). Senza Firebase configurato
+  // non c'è auth reale: si entra direttamente nel feed.
+  async function handleSubmit(e) {
     e.preventDefault();
-    navigate("/home");
+    if (!enabled) {
+      navigate("/home");
+      return;
+    }
+    setError("");
+    setSubmitting(true);
+    try {
+      await login(email, password);
+      navigate("/home");
+    } catch (err) {
+      setError(authErrorMessage(err.code));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -131,8 +148,11 @@ const Login = () => {
               </label>
             </div>
 
+            {error && <p className="text-danger small mb-2">{error}</p>}
+
             <button
               type="submit"
+              disabled={submitting}
               className="btn btn-primary rounded-pill w-100 py-2 fw-bold"
             >
               Sign in

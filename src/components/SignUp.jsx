@@ -1,18 +1,35 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LandingFooter from "./LandingFooter";
+import { useAuth, authErrorMessage } from "../auth-context";
 
 // Effettiva pagina per la registrazione di un nuovo utente
 const SignUp = () => {
   const navigate = useNavigate();
+  const { signup, enabled } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  // Per ora non c'è ancora un vero backend di autenticazione:
-  // la registrazione porta direttamente al feed
-  function handleSubmit(e) {
+  // Registrazione con Firebase Auth (email/password). Senza Firebase
+  // configurato non c'è auth reale: si entra direttamente nel feed.
+  async function handleSubmit(e) {
     e.preventDefault();
-    navigate("/home");
+    if (!enabled) {
+      navigate("/home");
+      return;
+    }
+    setError("");
+    setSubmitting(true);
+    try {
+      await signup(email, password);
+      navigate("/home");
+    } catch (err) {
+      setError(authErrorMessage(err.code));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -94,7 +111,13 @@ const SignUp = () => {
               believe may be of interest to you.
             </p>
 
-            <button type="submit" className="btn btn-primary rounded-pill w-100 py-2 fw-bold">
+            {error && <p className="text-danger small mb-2">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn btn-primary rounded-pill w-100 py-2 fw-bold"
+            >
               Agree &amp; Join
             </button>
           </form>

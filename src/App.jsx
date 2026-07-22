@@ -10,6 +10,8 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Placeholder from "./components/Placeholder";
 import PremiumToast from "./components/PremiumToast";
+import RequireAuth from "./components/RequireAuth";
+import PublicOnly from "./components/PublicOnly";
 
 function App() {
   return (
@@ -17,21 +19,28 @@ function App() {
       {/* Toast globale Premium: ascolta l'evento showPremiumToast */}
       <PremiumToast />
       <Routes>
-        {/* Pagine pubbliche: niente header/footer dell'app */}
+        {/* Landing pubblica, sempre accessibile */}
         <Route path="/" element={<Landing />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
 
-        {/* Profile ha gia' header/footer propri: rotta autonoma */}
-        <Route path="/profile" element={<Profile />} />
+        {/* Solo per non autenticati: se sei loggato vieni mandato a /home */}
+        <Route element={<PublicOnly />}>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
 
-        {/* Pagine dell'app: condividono header + footer tramite il Layout */}
-        <Route element={<Layout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/rete" element={<Placeholder titolo="La mia rete" />} />
-          <Route path="/lavoro" element={<Placeholder titolo="Lavoro" />} />
-          <Route path="/messaggi" element={<Placeholder titolo="Messaggistica" />} />
-          <Route path="/notifiche" element={<Placeholder titolo="Notifiche" />} />
+        {/* Pagine protette: richiedono il login */}
+        <Route element={<RequireAuth />}>
+          {/* Profile ha gia' header/footer propri: rotta autonoma */}
+          <Route path="/profile" element={<Profile />} />
+
+          {/* Il resto delle pagine app condivide header + footer tramite il Layout */}
+          <Route element={<Layout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/rete" element={<Placeholder titolo="La mia rete" />} />
+            <Route path="/lavoro" element={<Placeholder titolo="Lavoro" />} />
+            <Route path="/messaggi" element={<Placeholder titolo="Messaggistica" />} />
+            <Route path="/notifiche" element={<Placeholder titolo="Notifiche" />} />
+          </Route>
         </Route>
 
         {/* URL sconosciuti: torna alla landing */}
