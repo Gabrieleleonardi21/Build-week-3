@@ -145,12 +145,12 @@ const Login = () => {
               </button>
             </div>
 
-            <a
-              href="#"
+            <Link
+              to="/forgot-password"
               className="fw-bold text-decoration-none small d-inline-block mb-3"
             >
               Forgot password?
-            </a>
+            </Link>
 
             <div className="form-check mb-3">
               <input

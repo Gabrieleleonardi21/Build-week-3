@@ -7,6 +7,7 @@ import {
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { AuthContext } from "@/features/auth/auth-context";
@@ -75,6 +76,7 @@ function AuthProvider({ children }) {
     login: (email, password) =>
       signInWithEmailAndPassword(auth, email, password),
     logout: () => signOut(auth),
+    resetPassword: (email) => sendPasswordResetEmail(auth, email),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
