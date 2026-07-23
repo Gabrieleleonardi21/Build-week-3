@@ -27,9 +27,13 @@ function App() {
           {/* Landing pubblica, sempre accessibile */}
           <Route path="/" element={<Landing />} />
 
-          {/* Solo per non autenticati: se sei loggato vieni mandato a /home */}
+          {/* Registrazione: accessibile anche se sei loggato. Dalla landing
+              "Join now" devi poterti iscrivere (nuovo account), non entrare
+              direttamente nel feed. */}
+          <Route path="/signup" element={<SignUp />} />
+
+          {/* Login riservato ai non autenticati: se sei loggato vai a /home */}
           <Route element={<PublicOnly />}>
-            <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
           </Route>
 

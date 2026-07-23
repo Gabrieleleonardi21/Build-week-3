@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { AuthContext } from "@/features/auth/auth-context";
@@ -53,6 +55,13 @@ function AuthProvider({ children }) {
     return cred;
   }
 
+  // Accesso con Google tramite popup: Firebase importa nome e foto dal profilo
+  // Google. Richiede che il provider Google sia abilitato in console Firebase.
+  function loginWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
+  }
+
   const value = {
     user,
     loading,
@@ -62,6 +71,7 @@ function AuthProvider({ children }) {
     avatar,
     setAvatar,
     signup,
+    loginWithGoogle,
     login: (email, password) =>
       signInWithEmailAndPassword(auth, email, password),
     logout: () => signOut(auth),
