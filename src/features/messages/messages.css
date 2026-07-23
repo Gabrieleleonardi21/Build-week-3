@@ -1,0 +1,194 @@
+/* ---- Dock messaggistica (solo da lg / 992px in su) ---- */
+/* Sta a sinistra dei toast delle notifiche per non sovrapporsi a loro:
+   quelli sono larghi 340px a right:24px, quindi 24 + 340 + 24 = 388px. */
+.chat-dock {
+  position: fixed;
+  right: 388px;
+  bottom: 0;
+  width: 340px;
+  z-index: 1030;
+  background: #fff;
+  border: 1px solid #d0d5dd;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Intestazione cliccabile: alza/abbassa il pannello */
+.chat-dock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  color: #1d2226;
+}
+.chat-dock-header:hover {
+  background: #f3f6f8;
+}
+
+/* Il corpo "si alza": transizione sulla max-height */
+.chat-dock-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+.chat-dock-body--aperto {
+  max-height: 420px;
+  border-top: 1px solid #e6e9ec;
+}
+
+.chat-badge {
+  background: #0a66c2;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  padding: 1px 7px;
+}
+
+/* ---- Elenco conversazioni ---- */
+.chat-list {
+  max-height: 420px;
+  overflow-y: auto;
+}
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f0f2f5;
+  text-align: left;
+  cursor: pointer;
+}
+.chat-list-item:hover {
+  background: #f3f6f8;
+}
+.chat-list-item--attiva {
+  background: #eaf3fb;
+}
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.chat-avatar-piccolo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+/* min-width:0 serve a far funzionare il troncamento del testo dentro il flex */
+.chat-list-testo {
+  display: block;
+  flex-grow: 1;
+  min-width: 0;
+}
+.chat-nome {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1d2226;
+}
+.chat-anteprima,
+.chat-headline {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chat-ora {
+  font-size: 0.72rem;
+  color: #888;
+  flex-shrink: 0;
+}
+
+/* ---- Conversazione ---- */
+.chat-conv-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e6e9ec;
+}
+.chat-conv-testo {
+  display: block;
+  min-width: 0;
+}
+.chat-back {
+  border: none;
+  background: transparent;
+  padding: 0 4px 0 0;
+  cursor: pointer;
+  color: #0a66c2;
+}
+.chat-messaggi {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  overflow-y: auto;
+}
+.chat-bolla {
+  max-width: 78%;
+  align-self: flex-start;
+  background: #f0f2f5;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: #1d2226;
+}
+.chat-bolla--io {
+  align-self: flex-end;
+  background: #0a66c2;
+  color: #fff;
+}
+.chat-ora-bolla {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+.chat-input-riga {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #e6e9ec;
+}
+.chat-input {
+  flex-grow: 1;
+  min-width: 0;
+  border: 1px solid #d0d5dd;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+.chat-input:focus {
+  outline: none;
+  border-color: #0a66c2;
+}
+
+/* Altezze diverse tra dock (compatto) e pagina (a tutta altezza) */
+.chat-dock .chat-messaggi {
+  height: 300px;
+}
+.chat-page .chat-messaggi {
+  height: 55vh;
+}
+.chat-page .chat-list {
+  max-height: none;
+}
+.chat-page-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e6e9ec;
+}
