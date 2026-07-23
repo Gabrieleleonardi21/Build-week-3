@@ -4,7 +4,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import "@/assets/css/DropdownUser.css";
 import { useAuth } from "@/features/auth/auth-context";
 
-const AVATAR = "https://i.pravatar.cc/150?img=12";
+// Placeholder usato finché l'utente non carica una foto propria dalla Sidebar
+const AVATAR_PLACEHOLDER = "https://i.pravatar.cc/150?img=12";
 
 // Stessa chiave usata dalla Sidebar quando salvi una nuova esperienza.
 function leggiEsperienze() {
@@ -16,6 +17,7 @@ function leggiEsperienze() {
 // Toggle personalizzato: senza questo react-bootstrap applica le classi btn
 // e non si riesce a impilare avatar + scritta come nelle altre icone.
 const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
+  const { avatar } = useAuth();
   return (
     <a
       href="#"
@@ -26,7 +28,11 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
       }}
       className="px-3 d-flex flex-column align-items-center userToggle dropdown"
     >
-      <img src={AVATAR} alt="foto profilo" className="icon rounded-circle" />
+      <img
+        src={avatar || AVATAR_PLACEHOLDER}
+        alt="foto profilo"
+        className="icon rounded-circle"
+      />
       <p className="p-0 m-0 d-flex align-items-center gap-1">
         Tu
         <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
@@ -39,8 +45,9 @@ const UserToggle = forwardRef(function UserToggle({ onClick }, ref) {
 
 function DropdownUser() {
   const navigate = useNavigate();
-  // nome e cognome dell'utente loggato (impostati alla registrazione)
-  const { logout, enabled, nomeCompleto } = useAuth();
+  // nome, cognome e foto profilo dell'utente loggato (impostati alla
+  // registrazione / dalla Sidebar)
+  const { logout, enabled, nomeCompleto, avatar } = useAuth();
   const nomeMostrato = nomeCompleto || "Utente";
   // stesse esperienze salvate dalla Sidebar: mostriamo il titolo dell'ultima
   const [experiences, setExperiences] = useState(leggiEsperienze);
@@ -67,7 +74,7 @@ function DropdownUser() {
       <Dropdown.Menu className="userMenu dropdownCentrato">
         <div className="px-3 pt-2 d-flex gap-2">
           <img
-            src={AVATAR}
+            src={avatar || AVATAR_PLACEHOLDER}
             alt="foto profilo"
             className="rounded-circle userMenu-avatar"
           />

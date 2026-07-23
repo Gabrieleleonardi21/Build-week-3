@@ -19,6 +19,16 @@ function AuthProvider({ children }) {
   const [nomeCompleto, setNomeCompleto] = useState("");
   // se Firebase non è configurato non c'è nulla da attendere: loading parte false
   const [loading, setLoading] = useState(Boolean(auth));
+  // Foto profilo unica per tutta l'app (sidebar, navbar, composer, banner
+  // premium): stato inizializzato da localStorage, niente setState nell'effect.
+  const [avatar, setAvatarState] = useState(() =>
+    localStorage.getItem("profileAvatar")
+  );
+
+  function setAvatar(dataUrl) {
+    setAvatarState(dataUrl);
+    localStorage.setItem("profileAvatar", dataUrl);
+  }
 
   useEffect(() => {
     if (!auth) return;
@@ -49,6 +59,8 @@ function AuthProvider({ children }) {
     // nome e cognome se impostati, altrimenti la parte prima della @
     nomeCompleto: nomeCompleto || user?.email?.split("@")[0] || "",
     enabled: Boolean(auth), // true solo se Firebase è configurato
+    avatar,
+    setAvatar,
     signup,
     login: (email, password) =>
       signInWithEmailAndPassword(auth, email, password),
