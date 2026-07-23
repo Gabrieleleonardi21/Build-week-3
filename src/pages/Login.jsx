@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LandingFooter from "@/layout/LandingFooter";
 import { useAuth, authErrorMessage } from "@/features/auth/auth-context";
+import { useGoogleLogin } from "@/features/auth/useGoogleLogin";
 
 // Pagina di login
 const Login = () => {
   const navigate = useNavigate();
   const { login, enabled } = useAuth();
+  const { handleGoogle, error: googleError, loading: googleLoading } =
+    useGoogleLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -59,12 +62,16 @@ const Login = () => {
 
           <button
             type="button"
-            onClick={() => navigate("/home")}
+            onClick={handleGoogle}
+            disabled={googleLoading}
             className="btn btn-outline-secondary rounded-pill w-100 d-flex align-items-center justify-content-center gap-2 mb-2"
           >
             <i className="bi bi-google"></i>
             Continue with Google
           </button>
+          {googleError && (
+            <p className="text-danger small mb-2">{googleError}</p>
+          )}
 
           <button
             type="button"

@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LandingFooter from "@/layout/LandingFooter";
 import { useAuth, authErrorMessage } from "@/features/auth/auth-context";
+import { useGoogleLogin } from "@/features/auth/useGoogleLogin";
 
 // Effettiva pagina per la registrazione di un nuovo utente
 const SignUp = () => {
   const navigate = useNavigate();
   const { signup, enabled } = useAuth();
+  const { handleGoogle, error: googleError, loading: googleLoading } =
+    useGoogleLogin();
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [email, setEmail] = useState("");
@@ -171,12 +174,16 @@ const SignUp = () => {
 
           <button
             type="button"
-            onClick={() => navigate("/home")}
+            onClick={handleGoogle}
+            disabled={googleLoading}
             className="btn btn-outline-secondary rounded-pill w-100 d-flex align-items-center justify-content-center gap-2"
           >
             <i className="bi bi-google"></i>
             Continue with Google
           </button>
+          {googleError && (
+            <p className="text-danger small mt-2 mb-0">{googleError}</p>
+          )}
 
           <p className="text-center mt-3 mb-0">
             Already on LinkedIn?{" "}

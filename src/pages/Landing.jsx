@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import LandingFooter from "@/layout/LandingFooter";
+import { useGoogleLogin } from "@/features/auth/useGoogleLogin";
 
 // Landing page pubblica
 const Landing = () => {
+  const { handleGoogle, error } = useGoogleLogin();
+
   return (
     <div className="min-vh-100 d-flex flex-column">
       <div
@@ -81,9 +84,10 @@ const Landing = () => {
             Welcome to your professional community
           </h1>
 
-          {/* Accesso rapido con Google: porta al feed */}
-          <Link
-            to="/home"
+          {/* Accesso rapido con Google (login reale via popup Firebase) */}
+          <button
+            type="button"
+            onClick={handleGoogle}
             className="btn btn-primary w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-2 mb-3"
           >
             <span
@@ -93,7 +97,8 @@ const Landing = () => {
               <i className="bi bi-google text-primary"></i>
             </span>
             Continue with Google
-          </Link>
+          </button>
+          {error && <p className="text-danger small mb-3">{error}</p>}
 
           <Link
             to="/login"
