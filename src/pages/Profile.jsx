@@ -313,15 +313,32 @@ function Profile() {
 
             <Card className="mb-3 p-3">
               <SectionHeader title={t.featured} onEdit={() => setEntryModalKey("featured")} />
-              <div className="d-flex flex-wrap gap-3">
-                {featured.map((f) => (
-                  <div key={f.title} className="border rounded-3 p-3 flex-fill" style={{ minWidth: "160px" }}>
-                    <div className="small text-muted mb-2">{f.kind}</div>
-                    <i className={`bi ${f.icon || "bi-star"} fs-3`}></i>
-                    <div className="fw-bold small mt-2">{f.title}</div>
-                  </div>
-                ))}
-              </div>
+              <Row className="g-3">
+                {featured.map((f, i) => {
+                  // Alternanza 8-4 / 4-8 per riga (coppie di voci), così le
+                  // card non sono mai tutte della stessa larghezza: riga 0 =
+                  // 8-4, riga 1 = 4-8, riga 2 = 8-4, ecc. La voce eventualmente
+                  // spaiata (numero dispari di voci) occupa l'intera riga.
+                  const rowWideFirst = Math.floor(i / 2) % 2 === 0;
+                  const isFirstOfPair = i % 2 === 0;
+                  const isUnpairedLast = i === featured.length - 1 && featured.length % 2 === 1;
+                  const width = isUnpairedLast ? 12 : rowWideFirst === isFirstOfPair ? 8 : 4;
+
+                  return (
+                    <Col key={f.title} md={width}>
+                      <div className="border rounded-3 p-3 h-100">
+                        <div className="d-flex align-items-center gap-2 mb-1">
+                          <i className={`bi ${f.icon || "bi-star"} text-primary flex-shrink-0`}></i>
+                          <div className="fw-bold text-truncate" style={{ minWidth: 0 }}>
+                            {f.title}
+                          </div>
+                        </div>
+                        <div className="small text-muted">{f.kind}</div>
+                      </div>
+                    </Col>
+                  );
+                })}
+              </Row>
             </Card>
 
             <Card className="mb-3 p-3">
