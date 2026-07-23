@@ -108,6 +108,11 @@
   border-bottom-color: black;
 }
 
+.pubblicita {
+  color: #915907;
+  font-size: 14px;
+}
+
 /* Label piccole delle voci di navigazione: limitate a .iconContainer per
    non applicarsi (ed ereditare) a OGNI <p> dell'app come faceva prima. */
 .iconContainer p {

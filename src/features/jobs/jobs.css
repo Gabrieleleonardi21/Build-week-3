@@ -1,0 +1,56 @@
+/* Sezione Lavori */
+.job-title {
+  font-weight: 600;
+  color: #0a66c2;
+}
+.job-company {
+  font-size: 0.9rem;
+  color: #333;
+}
+/* Badge del tipo di contratto */
+.job-type {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  background: #eef3f8;
+  color: #0a66c2;
+  border-radius: 999px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+/* Riga meta: località, categoria, data (va a capo su schermi stretti) */
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.job-desc {
+  color: #555;
+}
+
+/* Bottone Salva / Salvata */
+.job-save {
+  border: 1px solid #0a66c2;
+  color: #0a66c2;
+  background: transparent;
+}
+.job-save--active {
+  background: #0a66c2;
+  color: #fff;
+}
+
+/* Pannello laterale "Offerte salvate" */
+.saved-job-title {
+  font-weight: 600;
+  color: #0a66c2;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.saved-job-remove {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+  padding: 0 4px;
+}
