@@ -10,14 +10,11 @@ import {
 } from "@/features/feed/SidebarModals";
 
 function Sidebar() {
-  // nome e cognome dell'utente loggato (impostati alla registrazione)
-  const { nomeCompleto } = useAuth();
+  // nome, cognome e foto profilo dell'utente loggato: stato condiviso da
+  // tutta l'app (navbar, composer, banner premium) tramite AuthProvider
+  const { nomeCompleto, avatar, setAvatar } = useAuth();
   const nomeMostrato = nomeCompleto || "Utente";
   const [activeModal, setActiveModal] = useState(null);
-  // stato inizializzato direttamente da localStorage: niente setState nell'effect
-  const [avatar, setAvatar] = useState(() =>
-    localStorage.getItem("profileAvatar")
-  );
   const [experiences, setExperiences] = useState(() => {
     const saved = localStorage.getItem("profileExperiences");
     if (saved) return JSON.parse(saved);
@@ -33,7 +30,6 @@ function Sidebar() {
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatar(reader.result);
-      localStorage.setItem("profileAvatar", reader.result);
     };
     reader.readAsDataURL(file);
   }
@@ -109,6 +105,7 @@ function Sidebar() {
             style={{
               width: "64px",
               height: "64px",
+              objectFit: "cover",
               marginTop: "-32px",
               cursor: "pointer",
             }}

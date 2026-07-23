@@ -3,6 +3,7 @@ import "@/features/feed/feed.css";
 import CreatePost from "@/features/feed/CreatePost";
 import Post from "@/features/feed/Post";
 import { isFirebaseConfigured } from "@/lib/firebase";
+import { useAuth } from "@/features/auth/auth-context";
 import {
   getCurrentUser,
   subscribeFeed,
@@ -19,7 +20,11 @@ import {
 function Feed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const user = getCurrentUser();
+  // Foto profilo condivisa (caricata dalla Sidebar): se presente sovrascrive
+  // quella di getCurrentUser (mock o Firebase photoURL).
+  const { avatar } = useAuth();
+  const baseUser = getCurrentUser();
+  const user = { ...baseUser, avatar: avatar || baseUser.avatar };
 
   useEffect(() => {
     // semina il DB se vuoto, poi ascolta gli aggiornamenti in tempo reale
