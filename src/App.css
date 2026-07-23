@@ -225,8 +225,10 @@
   box-sizing: content-box;
 }
 
-/* Instagram non mostra le etichette sotto le icone */
-.footerNav p {
+/* Instagram non mostra le etichette sotto le icone.
+   Solo quelle delle voci: il menu delle notifiche vive dentro la barra e i
+   suoi paragrafi devono restare visibili. */
+.footerNav .iconContainer p {
   display: none;
 }
 
@@ -240,6 +242,20 @@
 .footerNav .icon {
   width: 24px;
   height: 24px;
+}
+
+/* il dropdown delle notifiche e' avvolto da un div: gli serve lo stesso
+   spazio delle altre voci, altrimenti la barra si sbilancia */
+.footerNav .dropdown {
+  flex: 1;
+  display: flex;
+}
+
+/* qui le scritte sono nascoste, quindi l'icona e' centrata in verticale:
+   il segno va riportato sul bordo alto dell'icona, non della barra */
+.footerNav .notificheToggle-pallino,
+.footerNav .notificheSilenzioso-segno {
+  top: 10px;
 }
 
 .footerNav .iconContainer:active .icon {

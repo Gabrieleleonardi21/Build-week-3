@@ -15,9 +15,12 @@ const ORDINE = [
   NAV_ITEMS.notifiche,
 ];
 
-// Nella riga in linea le notifiche non sono un link ma un dropdown, quindi
-// le altre voci si fermano prima e l'icona notifiche la aggiunge DropdownNotifiche.
-const ORDINE_IN_LINEA = ORDINE.filter((voce) => voce !== NAV_ITEMS.notifiche);
+// Le notifiche non sono un link ma un dropdown, quindi le altre voci si
+// fermano prima e l'icona notifiche la aggiunge DropdownNotifiche.
+// Fino a md l'icona non compare affatto nell'header: sta nella barra in basso.
+const ORDINE_SENZA_NOTIFICHE = ORDINE.filter(
+  (voce) => voce !== NAV_ITEMS.notifiche
+);
 
 // Come in Menu/DropdownUser: toggle custom per impilare icona e scritta.
 const IconToggle = forwardRef(function IconToggle({ onClick }, ref) {
@@ -38,8 +41,8 @@ const IconToggle = forwardRef(function IconToggle({ onClick }, ref) {
 });
 
 function Icon() {
-  // stato delle notifiche tenuto qui: lo condividono il dropdown (da md in su)
-  // e il pallino della voce Notifiche nel menu a tendina mobile.
+  // stato delle notifiche del dropdown dell'header (visibile da md in su):
+  // fino a md le notifiche stanno nella barra in basso (FooterNav).
   const { notifiche, nuove, segnaComeViste } = useNotifiche();
 
   return (
@@ -48,19 +51,15 @@ function Icon() {
       <Dropdown align="end" className="d-md-none">
         <Dropdown.Toggle as={IconToggle} id="menu-icone" />
         <Dropdown.Menu className="iconMenu">
-          {ORDINE.map((voce) => (
-            <NavIcon
-              key={voce.to}
-              {...voce}
-              pallino={voce === NAV_ITEMS.notifiche && nuove > 0}
-            />
+          {ORDINE_SENZA_NOTIFICHE.map((voce) => (
+            <NavIcon key={voce.to} {...voce} />
           ))}
         </Dropdown.Menu>
       </Dropdown>
 
       {/* da md in su restano in linea come prima */}
       <div className="d-none d-md-flex align-items-center">
-        {ORDINE_IN_LINEA.map((voce) => (
+        {ORDINE_SENZA_NOTIFICHE.map((voce) => (
           <NavIcon key={voce.to} {...voce} />
         ))}
         <DropdownNotifiche
