@@ -18,20 +18,23 @@ Team EPICODE. Stack: React 19 + Vite 8 + React Router 7 + React‑Bootstrap + Fi
 9. [Il feed: componenti UI](#9-il-feed-componenti-ui)
 10. [Sidebar, profilo e persistenza locale](#10-sidebar-profilo-e-persistenza-locale)
 11. [La sezione Lavori (API Strive + offerte salvate)](#11-la-sezione-lavori-api-strive--offerte-salvate)
-12. [Componenti UI riutilizzabili](#12-componenti-ui-riutilizzabili)
-13. [Il Premium Toast (comunicazione via eventi)](#13-il-premium-toast-comunicazione-via-eventi)
-14. [Sicurezza (XSS, immagini, avatar)](#14-sicurezza-xss-immagini-avatar)
-15. [Configurazione e build](#15-configurazione-e-build)
-16. [Flussi end-to-end](#16-flussi-end-to-end)
-17. [Possibili miglioramenti](#17-possibili-miglioramenti)
+12. [La messaggistica (dock desktop + pagina mobile)](#12-la-messaggistica-dock-desktop--pagina-mobile)
+13. [Le notifiche simulate (eventi + modalità silenziosa)](#13-le-notifiche-simulate-eventi--modalità-silenziosa)
+14. [Componenti UI riutilizzabili](#14-componenti-ui-riutilizzabili)
+15. [Toast e modale Premium (comunicazione via eventi)](#15-toast-e-modale-premium-comunicazione-via-eventi)
+16. [Sicurezza (XSS, immagini, avatar)](#16-sicurezza-xss-immagini-avatar)
+17. [Configurazione e build](#17-configurazione-e-build)
+18. [Flussi end-to-end](#18-flussi-end-to-end)
+19. [Possibili miglioramenti](#19-possibili-miglioramenti)
 
 ---
 
 ## 1. Panoramica generale
 
 L'applicazione è un **clone di LinkedIn** (SPA — Single Page Application) che riproduce
-landing page, registrazione/login, feed sociale in tempo reale, pagina profilo e una
-sezione lavori con offerte reali da un'API esterna.
+landing page, registrazione/login (email/password e Google), feed sociale in tempo
+reale, pagina profilo, una sezione lavori con offerte reali da un'API esterna, una
+messaggistica responsive e un sistema di notifiche simulate.
 
 Due concetti reggono tutta l'architettura:
 
@@ -87,11 +90,13 @@ src/
 │   ├── Landing.jsx           # "/"     landing pubblica
 │   ├── Login.jsx             # "/login"
 │   ├── SignUp.jsx            # "/signup"
+│   ├── ForgotPassword.jsx    # "/forgot-password" (reset password via email)
 │   ├── Home.jsx              # "/home" (le tre colonne del feed)
 │   ├── Jobs.jsx              # "/lavoro" (offerte di lavoro, API Strive)
+│   ├── Messages.jsx          # "/messaggi" (pagina chat, esperienza < 992px)
 │   ├── Profile.jsx           # "/profile"
-│   ├── Placeholder.jsx       # sezioni "in costruzione" (rete/messaggi/notifiche)
-│   └── profile/              # sotto-componenti della pagina profilo
+│   ├── Placeholder.jsx       # sezioni "in costruzione" (rete / notifiche)
+│   └── profile/              # sotto-componenti + traduzioni della pagina profilo
 │
 ├── layout/                   # struttura ricorrente: header, footer, nav, logo, ricerca
 │   ├── Layout.jsx            # Header + <Outlet/> + FooterNav
@@ -105,6 +110,7 @@ src/
 │   ├── auth/                 # autenticazione
 │   │   ├── AuthProvider.jsx  # Provider del context (stato utente)
 │   │   ├── auth-context.js   # createContext + useAuth + traduzione errori
+│   │   ├── useGoogleLogin.js # hook condiviso per l'accesso con Google
 │   │   ├── RequireAuth.jsx   # guardia: solo utenti loggati
 │   │   └── PublicOnly.jsx    # guardia: solo NON loggati
 │   ├── feed/                 # feed sociale
@@ -114,13 +120,27 @@ src/
 │   │   ├── Sidebar.jsx / SidebarModals.jsx  # colonna sinistra + modali
 │   │   ├── RightAside.jsx / News.jsx        # colonna destra
 │   │   └── feed.css
-│   └── jobs/                 # sezione lavori (API Strive)
-│       ├── JobCard.jsx       # singola offerta + bottone Salva
-│       ├── SavedJobs.jsx     # pannello laterale offerte salvate
-│       └── jobs.css
+│   ├── jobs/                 # sezione lavori (API Strive)
+│   │   ├── JobCard.jsx       # singola offerta + bottone Salva
+│   │   ├── SavedJobs.jsx     # pannello laterale offerte salvate
+│   │   └── jobs.css
+│   ├── messages/             # messaggistica
+│   │   ├── ChatDock.jsx      # barra in fondo allo schermo (>= 992px)
+│   │   ├── ChatList.jsx      # elenco conversazioni (condiviso)
+│   │   ├── Conversation.jsx  # thread + invio messaggio (condiviso)
+│   │   ├── useChats.js       # stato chat + persistenza localStorage
+│   │   ├── messagesData.js   # conversazioni di esempio
+│   │   └── messages.css
+│   └── notifications/        # notifiche simulate
+│       ├── useNotifiche.js   # elenco + contatore delle nuove
+│       ├── NotificheToast.jsx / NotificaItem.jsx
+│       ├── notificheData.js  # dati iniziali + simulazione di arrivo
+│       └── silenzioso.js     # modalità silenziosa (stato via evento window)
 │
 ├── ui/                       # componenti presentazionali riutilizzabili
-│   ├── Card.jsx, ProfileImage.jsx, Banner.jsx, PremiumToast.jsx, ...
+│   ├── Card.jsx, ProfileImage.jsx, Banner.jsx, ...
+│   ├── PremiumToast.jsx      # toast Premium (evento window)
+│   └── PremiumModal.jsx      # modale Premium dopo il login (chiudibile a 5s)
 │
 └── lib/                      # logica non-React (dati, API, config)
     ├── firebase.js           # init Firebase (db + auth)
@@ -188,9 +208,12 @@ avvolge le rotte e gestisce l'attesa del chunk.
 <Routes>
   <Route path="/" element={<Landing />} />            {/* pubblica sempre */}
 
+  {/* Registrazione: raggiungibile anche da loggati (vedi sotto) */}
+  <Route path="/signup" element={<SignUp />} />
+
   <Route element={<PublicOnly />}>                    {/* solo NON loggati */}
-    <Route path="/signup" element={<SignUp />} />
-    <Route path="/login"  element={<Login />} />
+    <Route path="/login"           element={<Login />} />
+    <Route path="/forgot-password" element={<ForgotPassword />} />
   </Route>
 
   <Route element={<RequireAuth />}>                   {/* solo loggati */}
@@ -200,7 +223,7 @@ avvolge le rotte e gestisce l'attesa del chunk.
       <Route path="/home"      element={<Home />} />
       <Route path="/rete"      element={<Placeholder titolo="La mia rete" />} />
       <Route path="/lavoro"    element={<Jobs />} />
-      <Route path="/messaggi"  element={<Placeholder titolo="Messaggistica" />} />
+      <Route path="/messaggi"  element={<Messages />} />
       <Route path="/notifiche" element={<Placeholder titolo="Notifiche" />} />
     </Route>
   </Route>
@@ -221,8 +244,12 @@ corrispondente all'URL.
   (cambia solo il contenuto centrale — niente flicker).
 - `/profile` sta dentro `RequireAuth` ma **fuori** da `Layout`, perché la pagina
   profilo ha header/footer propri.
-- `/lavoro` è una pagina reale (`Jobs`, vedi §11); `/rete`, `/messaggi`, `/notifiche`
-  usano ancora il `Placeholder` "in costruzione".
+- `/lavoro` (§11) e `/messaggi` (§12) sono pagine reali; `/rete` e `/notifiche` usano
+  ancora il `Placeholder` "in costruzione".
+- **`/signup` sta fuori da `PublicOnly`**: è raggiungibile anche da autenticati. Serve
+  perché dalla landing il pulsante "Join now" deve mostrare il modulo di
+  registrazione (per creare un nuovo account) invece di far entrare direttamente nel
+  feed. Il login, al contrario, resta riservato ai non autenticati.
 - La catch-all `*` riporta alla landing gli URL inesistenti.
 
 ---
@@ -289,11 +316,18 @@ const value = {
   loading,
   nomeCompleto: nomeCompleto || user?.email?.split("@")[0] || "", // fallback: parte prima della @
   enabled: Boolean(auth),        // true solo se Firebase è configurato
+  avatar, setAvatar,             // foto profilo unica per tutta l'app (localStorage)
   signup,                        // crea account + salva nome/cognome nel displayName
+  loginWithGoogle,               // accesso con Google (popup)
   login:  (email, pw) => signInWithEmailAndPassword(auth, email, pw),
   logout: ()          => signOut(auth),
+  resetPassword: (email) => sendPasswordResetEmail(auth, email),
 };
 ```
+
+`avatar`/`setAvatar` stanno qui (e non in un componente) perché la stessa foto serve
+in punti lontani dell'albero — sidebar, navbar, composer, banner — ed è persistita in
+`localStorage`.
 
 `signup` fa due cose in sequenza: crea l'account, poi scrive `"Nome Cognome"` nel
 `displayName` con `updateProfile`, così l'app mostra il nome invece dell'email.
@@ -344,8 +378,39 @@ redirezioni.
   poi `navigate("/")`. Il listener `onAuthStateChanged` azzera `user`, così le guardie
   scattano automaticamente.
 
-I bottoni "Continue with Google"/"Apple" sono **decorativi**: portano a `/home` senza
-autenticazione reale (solo Email/Password è attivo).
+Il bottone "Sign in with Apple" resta **decorativo** (porta a `/home` senza auth reale);
+Google invece è un accesso vero, vedi sotto.
+
+### 6.6 Accesso con Google — `useGoogleLogin.js`
+
+Il provider espone `loginWithGoogle()`, che apre il popup di Google:
+
+```js
+function loginWithGoogle() {
+  const provider = new GoogleAuthProvider();
+  return signInWithPopup(auth, provider);
+}
+```
+
+Firebase importa automaticamente **nome e foto** dal profilo Google (finiscono in
+`displayName`/`photoURL`, già usati dall'app).
+
+Il pulsante "Continue with Google" compare in **tre pagine** (Landing, Login, SignUp):
+per non ripetere la stessa logica tre volte c'è l'hook `useGoogleLogin()`, che
+incapsula popup, redirect a `/home`, stato di attesa ed errore, e restituisce
+`{ handleGoogle, error, loading }`. Dettaglio importante: se l'utente **chiude il
+popup** (`auth/popup-closed-by-user`, `auth/cancelled-popup-request`) non viene
+mostrato alcun errore, perché non è un vero fallimento.
+
+Lato Firebase serve il provider Google abilitato in console e il dominio tra gli
+*Authorized domains* (`localhost` lo è già di default).
+
+### 6.7 Recupero password — `pages/ForgotPassword.jsx`
+
+Form con la sola email che chiama `resetPassword(email)`
+(`sendPasswordResetEmail`), poi mostra una schermata di conferma. Scelta di sicurezza:
+se Firebase risponde `auth/user-not-found` la pagina **mostra comunque la conferma**,
+per non rivelare quali email sono registrate (evita l'enumerazione degli account).
 
 ---
 
@@ -356,6 +421,10 @@ autenticazione reale (solo Email/Password è attivo).
 Il guscio comune delle pagine app: `<Header/>`, un `<Container>` con `<Outlet/>` per il
 contenuto della rotta, e `<FooterNav/>`. Header e footer restano montati durante la
 navigazione tra le sezioni.
+
+Qui vivono anche i due elementi "flottanti" presenti su tutte le pagine dell'app:
+`<NotificheToast/>` (§13) e `<ChatDock/>` (§12). Stanno nel Layout proprio perché
+devono sopravvivere al cambio di rotta.
 
 ### 7.2 `Header.jsx`
 
@@ -475,7 +544,7 @@ storage di file). Per non appesantirlo:
   proporzioni (lato max 1080px) e lo **ricomprime** in JPEG qualità 0.8, restituendo un
   data URL compatto. Rilascia sempre l'`objectURL` temporaneo.
 - `sanitizeImage` — accetta solo `data:image/...` o URL `http(s)`, scarta schemi
-  pericolosi (es. `javascript:`) → difesa anti-XSS (vedi §14).
+  pericolosi (es. `javascript:`) → difesa anti-XSS (vedi §16).
 
 ---
 
@@ -569,7 +638,7 @@ Isola l'accesso all'API dai componenti (stessa filosofia di `api.js` per il feed
   in **HTML**, quindi non va mai iniettata nel DOM. La convertiamo in testo semplice con
   `DOMParser().parseFromString(html, "text/html")` leggendo solo `body.textContent`:
   il documento è **inerte** (non esegue script né carica risorse) e non usiamo mai
-  `innerHTML`. Vedi §14.
+  `innerHTML`. Vedi §16.
 - `excerpt(text, max)` — accorcia il testo con i puntini di sospensione.
 - `jobTypeLabel(type)` — traduce i tipi di contratto in italiano (`full_time` →
   "Tempo pieno", …), con fallback se il valore è vuoto o sconosciuto.
@@ -631,20 +700,98 @@ vista. Punti tecnici:
 
 ---
 
-## 12. Componenti UI riutilizzabili
+## 12. La messaggistica (dock desktop + pagina mobile)
+
+La messaggistica cambia **forma** in base alla larghezza dello schermo, con la soglia
+a **992px** (breakpoint `lg` di Bootstrap). I dati sono finti: non esiste un backend
+di chat.
+
+### 12.1 Le due esperienze
+
+- **Da 992px in su** → `ChatDock`: una barra fissa in fondo allo schermo, montata nel
+  `Layout` quindi presente su **tutte** le pagine dell'app. Cliccando l'intestazione il
+  pannello **si alza** e mostra le chat in corso; aprendo una chat la conversazione
+  compare dentro il dock, con una freccia per tornare all'elenco.
+- **Sotto 992px** → il dock è nascosto (`d-none d-lg-block`) e la rotta `/messaggi`
+  mostra `pages/Messages.jsx`, la pagina con **tutte** le chat. Si vede una cosa alla
+  volta: elenco → conversazione con "torna indietro" (UX corretta su mobile).
+
+Sulla pagina `/messaggi` il dock si auto-nasconde (`if (pathname === "/messaggi")
+return null`) per non mostrare due volte la stessa cosa.
+
+### 12.2 L'animazione "si alza"
+
+Non si può animare `height: auto`, quindi il corpo del dock usa una transizione su
+`max-height`: chiuso `0`, aperto `420px`, con `overflow: hidden`. Il risultato è il
+pannello che sale e scende in modo fluido.
+
+### 12.3 Posizionamento (convivenza con le notifiche)
+
+I toast delle notifiche sono `position: fixed` a `right: 24px` e larghi `340px`, con
+`z-index` più alto del dock: messi entrambi a destra, il dock finiva **coperto**. Per
+questo il dock è spostato a sinistra della loro colonna:
+
+```
+right: 388px   /* = 24 (margine toast) + 340 (larghezza toast) + 24 (spazio) */
+```
+
+### 12.4 Componenti e stato
+
+- `ChatList.jsx` e `Conversation.jsx` sono **condivisi** da dock e pagina: nessuna
+  duplicazione di markup: cambia solo il contenitore (e l'altezza, via CSS).
+- `useChats()` tiene le conversazioni in stato (init **lazy** da `localStorage`,
+  seed da `messagesData.js` la prima volta) ed espone `inviaMessaggio(chatId, testo)`.
+  La persistenza serve a far sì che un messaggio scritto nel dock si ritrovi anche
+  nella pagina `/messaggi`, e viceversa.
+- Le bolle dei messaggi propri sono allineate a destra (classe `chat-bolla--io`),
+  quelle dell'interlocutore a sinistra.
+
+---
+
+## 13. Le notifiche simulate (eventi + modalità silenziosa)
+
+Sistema di notifiche **finte** che arrivano nel tempo, in `features/notifications/`.
+Come il toast Premium (§15), la comunicazione tra parti lontane dell'albero avviene
+con **eventi custom sul `window`** invece che con props o context.
+
+- `notificheData.js` — notifiche iniziali, `EVENTO_NOTIFICA` (`"nuovaNotifica"`),
+  `inviaNotifica()` (che fa `dispatchEvent` di una `CustomEvent`) e
+  `avviaSimulazioneNotifiche()`, che ne programma l'arrivo a intervalli casuali.
+- `useNotifiche()` — hook che ascolta l'evento, antepone la nuova notifica all'elenco
+  e incrementa il contatore delle **non viste**; `segnaComeViste()` lo azzera. Il
+  listener è registrato in un `useEffect` con cleanup.
+- `NotificheToast.jsx` / `NotificaItem.jsx` — i toast in basso a destra (montati nel
+  `Layout`) e la singola riga, riusata anche nel dropdown.
+- `layout/DropdownNotifiche.jsx` — il menu a tendina delle notifiche, **responsive**:
+  da md in su sta nell'header e scende dal toggle; fino a md la voce vive invece nella
+  barra in basso (`FooterNav` la sostituisce a `NavIcon` passando `versioneFooter`) e
+  il pannello resta ancorato **sopra la barra aprendosi verso l'alto**. Il contenuto è
+  lo stesso nelle due varianti; cambia solo l'indicatore: badge numerico nell'header,
+  pallino lampeggiante nella barra in basso. All'apertura il contatore si azzera
+  (`segnaComeViste`).
+- `silenzioso.js` — **modalità silenziosa**: si attiva con doppio click sull'icona
+  notifiche; le notifiche continuano ad arrivare e ad aggiornare l'elenco, ma senza
+  toast né badge. Lo stato è una variabile a livello di modulo (`isSilenzioso()`),
+  letta dentro i listener per avere sempre il valore aggiornato senza dipendere dalla
+  closure dell'effect, più `useSilenzioso()` per i componenti che devono cambiare
+  aspetto.
+
+---
+
+## 14. Componenti UI riutilizzabili
 
 In `ui/`: componenti presentazionali senza logica di dominio.
 
 - `Card.jsx` — wrapper `.card` Bootstrap con `className` passabile.
 - `ProfileImage.jsx` — avatar circolare con `size` configurabile.
 - `Banner.jsx`, `Pubblicta.jsx`, `Puzzle.jsx` — blocchi decorativi dell'aside.
-- `PremiumToast.jsx` — vedi §13.
+- `PremiumToast.jsx` e `PremiumModal.jsx` — vedi §15.
 
 Riusabili perché non sanno nulla del feed o dell'auth: ricevono tutto via props.
 
 ---
 
-## 13. Il Premium Toast (comunicazione via eventi)
+## 15. Toast e modale Premium (comunicazione via eventi)
 
 `ui/PremiumToast.jsx` è montato **globalmente** in `App.jsx`, fuori dalle rotte, così è
 disponibile ovunque. Comunica con il resto dell'app tramite un **evento custom del
@@ -661,9 +808,14 @@ disponibile ovunque. Comunica con il resto dell'app tramite un **evento custom d
 Vantaggio del pattern a eventi: qualsiasi componente, ovunque nell'albero, può aprire
 il toast senza dover ricevere una funzione via props attraverso molti livelli.
 
+**`PremiumModal.jsx`** è invece la modale a tutto schermo mostrata in `Home` subito
+dopo il login: parte visibile e un `setInterval` fa scorrere un **countdown di 5
+secondi**, al termine del quale compare il pulsante di chiusura (`canClose`).
+L'intervallo viene sempre ripulito nel cleanup dell'effect.
+
 ---
 
-## 14. Sicurezza (XSS, immagini, avatar)
+## 16. Sicurezza (XSS, immagini, avatar)
 
 La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
 
@@ -683,10 +835,13 @@ La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
   iniettabile.
 - **Validazione file** (`validateImageFile`): tipo e dimensione controllati prima di
   processare, evitando input malevoli o troppo pesanti.
+- **Nessuna enumerazione degli account** (§6.7): la pagina di recupero password mostra
+  la conferma anche quando l'email non esiste, così non si può scoprire quali indirizzi
+  sono registrati.
 
 ---
 
-## 15. Configurazione e build
+## 17. Configurazione e build
 
 - **Alias `@` → `src/`**: in `vite.config.js` (`resolve.alias` via `fileURLToPath`) e
   in `jsconfig.json` (per l'autocompletamento dell'IDE). Import assoluti e stabili.
@@ -700,32 +855,49 @@ La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
 
 ---
 
-## 16. Flussi end-to-end
+## 18. Flussi end-to-end
 
-### 16.1 Registrazione
+### 18.1 Registrazione
 
 1. Utente su `/signup` compila nome, cognome, email, password → submit.
-2. `PublicOnly` lo lascia passare perché non loggato.
+2. La rotta è fuori da `PublicOnly`, quindi il modulo si vede sempre — anche arrivandoci
+   da loggati con "Join now" dalla landing.
 3. `handleSubmit` chiama `signup(email, pw, nome, cognome)`:
    `createUserWithEmailAndPassword` → `updateProfile({displayName})`.
 4. `onAuthStateChanged` scatta, popola `user` e `nomeCompleto`.
-5. `navigate("/home")`. Tentando ora `/login` o `/signup`, `PublicOnly` reindirizza a
-   `/home`.
+5. `navigate("/home")`. Tentando ora `/login`, `PublicOnly` reindirizza a `/home`.
 
-### 16.2 Login
+### 18.2 Login (email e password)
 
 1. `/login`, credenziali → `signInWithEmailAndPassword`.
 2. Errori (credenziali sbagliate, ecc.) tradotti da `authErrorMessage` e mostrati.
 3. Successo → `onAuthStateChanged` aggiorna il context → `navigate("/home")`.
 
-### 16.3 Apertura del feed
+### 18.3 Accesso con Google
+
+1. Click su "Continue with Google" (Landing, Login o SignUp) → `handleGoogle`
+   dell'hook `useGoogleLogin`.
+2. `signInWithPopup` apre il popup Google; `loading` disabilita il pulsante.
+3. Successo → Firebase popola `displayName`/`photoURL` → `onAuthStateChanged` aggiorna
+   il context → `navigate("/home")`.
+4. Se l'utente chiude il popup non viene mostrato alcun errore; gli altri errori
+   compaiono sotto il pulsante.
+
+### 18.4 Recupero password
+
+1. Da `/login` → "Forgot password?" → `/forgot-password`.
+2. Invio dell'email → `resetPassword(email)` (`sendPasswordResetEmail`).
+3. Compare la schermata di conferma — **anche se l'email non è registrata**, per non
+   rivelare quali account esistono.
+
+### 18.5 Apertura del feed
 
 1. Rotta `/home` protetta da `RequireAuth` (utente presente → passa).
 2. `Feed` monta: `seedIfEmpty()` (semina se DB vuoto) + `subscribeFeed`.
 3. `onValue` consegna i post ordinati; `loading` diventa `false`; render.
 4. Da qui ogni scrittura (propria o di altri client) riaggiorna il feed in tempo reale.
 
-### 16.4 Pubblicare un post con immagine
+### 18.6 Pubblicare un post con immagine
 
 1. Click su "Foto" in `CreatePost` → input file → `processImage` (valida, ridimensiona,
    comprime) → anteprima.
@@ -733,14 +905,14 @@ La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
    sanitizzata).
 3. `onValue` rileva il nuovo nodo → il post appare in cima a tutti i client.
 
-### 16.5 Like / Commento / Condivisione
+### 18.7 Like / Commento / Condivisione
 
 - **Like**: `toggleLike` aggiunge/rimuove `likes/<clientId>`. Il conteggio e lo stato
   "liked" si ricalcolano al prossimo snapshot.
 - **Commento**: `addComment` fa `push` sotto `comments/`. `toPost` li ordina per data.
 - **Condivisione**: `sharePost` incrementa `shares` con `runTransaction` (atomico).
 
-### 16.6 Cercare e salvare un'offerta di lavoro
+### 18.8 Cercare e salvare un'offerta di lavoro
 
 1. Rotta `/lavoro` (protetta): `Jobs` monta e `caricaOfferte("")` scarica le offerte di
    default da `fetchJobs`.
@@ -750,7 +922,17 @@ La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
    in `localStorage`; l'offerta compare subito nel pannello "Offerte salvate" a destra.
 4. La "×" nel pannello rimuove l'offerta (stesso toggle) e la card torna "Salva".
 
-### 16.7 Logout
+### 18.9 Scrivere un messaggio
+
+1. **Da 992px in su**: click sull'intestazione del `ChatDock` → il pannello si alza e
+   mostra l'elenco chat; si sceglie una conversazione.
+2. **Sotto 992px**: si va su `/messaggi` (il dock è nascosto) e si tocca una chat.
+3. In entrambi i casi si usa lo stesso `Conversation`: al submit parte
+   `inviaMessaggio(chatId, testo)` di `useChats`.
+4. Lo stato viene aggiornato e scritto in `localStorage`, quindi il messaggio si
+   ritrova passando dal dock alla pagina e viceversa.
+
+### 18.10 Logout
 
 1. Menu utente → "Esci" → `handleLogout`.
 2. Se `enabled`: `signOut`. `onAuthStateChanged` azzera `user`.
@@ -758,15 +940,15 @@ La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
 
 ---
 
-## 17. Possibili miglioramenti
+## 19. Possibili miglioramenti
 
 > Come da preferenza di progetto, segnalo miglioramenti con la relativa motivazione.
 > Sono proposte, non modifiche già applicate.
 
-1. **Unificare la persistenza del profilo.** Avatar ed esperienze vivono in
-   `localStorage`, ma nome/login su Firebase. Portare anche il profilo su Firebase
-   (nodo `users/<uid>`) darebbe dati coerenti tra dispositivi e allineati all'utente
-   loggato, invece che legati al singolo browser.
+1. **Unificare la persistenza dei dati utente.** Avatar, esperienze, offerte salvate e
+   chat vivono in `localStorage`, mentre nome/login stanno su Firebase. Portarli su
+   Firebase (nodo `users/<uid>`) darebbe dati coerenti tra dispositivi e allineati
+   all'utente loggato, invece che legati al singolo browser.
 
 2. **Centralizzare la lettura delle esperienze.** `Sidebar` e `DropdownUser` leggono la
    stessa chiave `localStorage` con codice duplicato e nessuna sincronizzazione live
@@ -796,7 +978,18 @@ La sicurezza contro XSS è un requisito esplicito del progetto. Misure adottate:
    `uid` invece che a `clientId` (localStorage) impedirebbe di "moltiplicare" i like
    cambiando browser e renderebbe il dato più corretto.
 
-8. **Accessibilità dei bottoni "decorativi".** I pulsanti Google/Apple che portano a
-   `/home` senza auth reale potrebbero confondere: un'etichetta o un tooltip che chiami
-   la modalità demo eviterebbe ambiguità.
+8. **Il bottone Apple è ancora "decorativo".** Ora che Google fa un accesso vero, il
+   pulsante "Sign in with Apple" che porta a `/home` senza autenticazione stona:
+   andrebbe implementato (provider Apple) oppure rimosso/segnalato come demo, per non
+   confondere l'utente.
+
+9. **Auto-scroll della conversazione.** In `Conversation.jsx` il thread non scorre da
+   solo: con chat lunghe, dopo "Invia" il messaggio nuovo finisce sotto l'area visibile
+   e bisogna scorrere a mano. Basterebbe un `useRef` sul contenitore `.chat-messaggi` e
+   portarlo a `scrollHeight` quando cambia l'elenco dei messaggi.
+
+10. **Le chat sono solo locali.** `useChats` non ha un backend: i messaggi restano nel
+    browser e l'interlocutore non risponde mai. Appoggiando le conversazioni al
+    Realtime Database (come il feed, con `onValue`) diventerebbero reali e in tempo
+    reale tra utenti diversi.
 ```
