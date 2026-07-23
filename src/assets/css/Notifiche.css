@@ -1,0 +1,190 @@
+/* Il toggle deve restare identico alla vecchia icona: stesse dimensioni,
+   serve solo il position relative per agganciare il badge. */
+.notificheToggle {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Badge classico: cerchio rosso piccolo, numero bianco, in alto a destra
+   dell'icona (non della colonna icona + scritta). */
+.notificheBadge {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  margin-left: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: #cc1016;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+}
+
+/* Modalita' silenziosa: l'icona resta al suo posto ma un po' sbiadita, con
+   una campanella barrata dove starebbe il badge. */
+.notificheToggle-silenzioso .icon {
+  opacity: 0.45;
+}
+
+.notificheSilenzioso-segno {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  margin-left: 4px;
+  font-size: 11px;
+  line-height: 1;
+  color: rgb(0 0 0 / 0.55);
+}
+
+.notificheMenu {
+  --bs-dropdown-border-radius: 8px;
+  --bs-dropdown-padding-y: 0;
+  width: 340px;
+  max-width: calc(100vw - 16px);
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 4px 0;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.notificaItem {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgb(0 0 0 / 0.08);
+}
+
+.notificaItem:last-child {
+  border-bottom: 0;
+}
+
+.notificheMenu .notificaItem:hover {
+  background-color: #f3f2ef;
+}
+
+.notificaItem-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.notificaItem-corpo {
+  min-width: 0;
+}
+
+/* App.css imposta "p { font-size: 12px }": qui servono classi per sovrascrivere */
+.notificaItem-testo {
+  font-size: 14px;
+  color: rgb(0 0 0 / 0.9);
+  /* testo per esteso: niente troncamento su una riga */
+  white-space: normal;
+  word-break: break-word;
+}
+
+.notificaItem-autore {
+  font-weight: 600;
+}
+
+.notificaItem-tempo {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgb(0 0 0 / 0.6);
+}
+
+/* Toast: in basso a destra ma staccato dai bordi della pagina.
+   Impilati verso l'alto quando ne arriva piu' di uno. */
+.notificheToast-area {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1040;
+  width: 340px;
+  max-width: calc(100vw - 48px);
+}
+
+.notificheToast {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+/* dentro il toast la riga e' unica: niente linea di separazione */
+.notificheToast .notificaItem {
+  border-bottom: 0;
+  padding-right: 36px;
+}
+
+.notificheToast-chiudi {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.notificheToast-chiudi:hover {
+  opacity: 1;
+}
+
+/* Versione mobile del toast: solo la scritta, qualche px sotto l'header
+   (l'header sticky e' alto 56px, come il top usato da .dropdownCentrato). */
+.notificheToastMobile-area {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1040;
+  display: flex;
+  max-width: calc(100vw - 32px);
+}
+
+.notificheToastMobile {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background-color: #fff;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(0 0 0 / 0.9);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Pallino rosso lampeggiante: nel menu a tendina delle icone (solo mobile)
+   sostituisce il badge numerico, nella stessa posizione. */
+.notifichePallino {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #cc1016;
+  animation: notifichePallino-lampeggio 1s ease-in-out infinite;
+}
+
+@keyframes notifichePallino-lampeggio {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* il pallino e' posizionato rispetto all'icona, non a tutta la voce */
+.navIcon-immagine {
+  position: relative;
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notifichePallino {
+    animation: none;
+  }
+}

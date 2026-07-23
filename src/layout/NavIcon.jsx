@@ -3,7 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 // Voce di navigazione condivisa tra header, menu a tendina e footer.
 // La voce attiva (quella la cui rotta combacia con l'URL corrente) prende
 // il border-bottom nero tramite la classe iconAttiva.
-function NavIcon({ to, src, alt, testo, classeTesto = "p-0 m-0" }) {
+function NavIcon({
+  to,
+  src,
+  alt,
+  testo,
+  classeTesto = "p-0 m-0",
+  // pallino rosso lampeggiante sopra l'icona (notifiche nuove nel menu mobile)
+  pallino = false,
+}) {
   const { pathname } = useLocation();
   const attiva = pathname === to;
 
@@ -17,7 +25,10 @@ function NavIcon({ to, src, alt, testo, classeTesto = "p-0 m-0" }) {
 
   return (
     <Link to={to} className={className}>
-      <img src={src} alt={alt} className="icon" />
+      <span className="navIcon-immagine">
+        <img src={src} alt={alt} className="icon" />
+        {pallino && <span className="notifichePallino"></span>}
+      </span>
       <p className={classeTesto}>{testo}</p>
     </Link>
   );
