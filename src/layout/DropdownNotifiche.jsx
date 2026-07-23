@@ -20,7 +20,7 @@ const RITARDO_APERTURA = 320;
 // classi btn di react-bootstrap e mantenere l'icona identica a prima
 // (stesse classi di NavIcon), con in piu' il badge del contatore.
 const NotificheToggle = forwardRef(function NotificheToggle(
-  { onClick, onClickToggle, nuove, attiva, silenzioso },
+  { onClick, onClickToggle, nuove, attiva, silenzioso, usaPallino },
   ref
 ) {
   const className = [
@@ -55,9 +55,15 @@ const NotificheToggle = forwardRef(function NotificheToggle(
         className="icon"
       />
       <p className="p-0 m-0">{NAV_ITEMS.notifiche.testo}</p>
-      {/* il badge esiste solo se ci sono notifiche nuove: alla prima vale 1.
-          In modalita' silenziosa "nuove" resta 0, quindi non compare mai. */}
-      {nuove > 0 && <span className="notificheBadge">{nuove}</span>}
+      {/* il segno esiste solo se ci sono notifiche nuove: alla prima vale 1.
+          In modalita' silenziosa "nuove" resta 0, quindi non compare mai.
+          Nella barra in basso al posto del numero c'e' un pallino lampeggiante. */}
+      {nuove > 0 && usaPallino && (
+        <span className="notifichePallino notificheToggle-pallino"></span>
+      )}
+      {nuove > 0 && !usaPallino && (
+        <span className="notificheBadge">{nuove}</span>
+      )}
       {/* al suo posto, la campanella barrata segnala il silenzioso */}
       {silenzioso && (
         <i className="bi bi-bell-slash-fill notificheSilenzioso-segno"></i>
@@ -69,7 +75,14 @@ const NotificheToggle = forwardRef(function NotificheToggle(
 // Icona notifiche dell'header: click -> apre/chiude l'elenco completo.
 // Niente titolo e niente freccia, come richiesto. Lo stato arriva da Icon,
 // che lo condivide con il pallino del menu a tendina mobile.
-function DropdownNotifiche({ notifiche, nuove, segnaComeViste }) {
+// versioneFooter: nella barra in basso il menu si apre verso l'alto e al posto
+// del badge numerico compare il pallino rosso lampeggiante.
+function DropdownNotifiche({
+  notifiche,
+  nuove,
+  segnaComeViste,
+  versioneFooter = false,
+}) {
   const { pathname } = useLocation();
   const silenzioso = useSilenzioso();
   // istante dell'ultimo click sul toggle, per riconoscere il doppio click
@@ -78,6 +91,13 @@ function DropdownNotifiche({ notifiche, nuove, segnaComeViste }) {
   const aperturaRimandata = useRef(null);
 
   useEffect(() => () => clearTimeout(aperturaRimandata.current), []);
+
+  // nell'header il pannello scende dal toggle (centrato fino a md),
+  // nella barra in basso sale da sotto restando ancorato sopra la barra
+  const dropDirezione = versioneFooter ? "up" : "down";
+  const classeMenu = versioneFooter
+    ? "notificheMenu notificheMenu-footer"
+    : "notificheMenu dropdownCentrato";
 
   // All'apertura il badge si azzera subito: le notifiche sono "viste".
   function handleToggle(isOpen) {
@@ -105,17 +125,18 @@ function DropdownNotifiche({ notifiche, nuove, segnaComeViste }) {
   }
 
   return (
-    <Dropdown align="end" onToggle={handleToggle}>
+    <Dropdown align="end" onToggle={handleToggle} drop={dropDirezione}>
       <Dropdown.Toggle
         as={NotificheToggle}
         id="notifiche-dropdown"
         nuove={nuove}
         attiva={pathname === NAV_ITEMS.notifiche.to}
         silenzioso={silenzioso}
+        usaPallino={versioneFooter}
         onClickToggle={handleClick}
       />
 
-      <Dropdown.Menu className="notificheMenu dropdownCentrato">
+      <Dropdown.Menu className={classeMenu}>
         {notifiche.map((notifica) => (
           <NotificaItem key={notifica.id} notifica={notifica} />
         ))}

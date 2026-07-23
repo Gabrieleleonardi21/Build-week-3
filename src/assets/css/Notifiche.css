@@ -53,6 +53,29 @@
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
 }
 
+/* Versione della barra in basso: il pannello e' identico a quello da 992 in su
+   (stessa larghezza e stesso elenco completo), ma resta ancorato sopra la barra
+   e si apre verso l'alto. Popper scrive position/inset/transform inline, per
+   questo servono gli !important e l'azzeramento di inset prima di bottom/left. */
+.notificheMenu-footer.dropdown-menu {
+  position: fixed !important;
+  inset: auto !important;
+  transform: translateX(-50%) !important;
+  bottom: calc(56px + env(safe-area-inset-bottom)) !important;
+  left: 50% !important;
+  /* cinque notifiche a schermo (~76px l'una), le altre si scorrono */
+  max-height: min(380px, calc(100vh - 120px));
+}
+
+/* Nella barra in basso al posto del badge numerico c'e' il pallino
+   lampeggiante, nella stessa posizione (il toggle non ha .navIcon-immagine). */
+.notificheToggle-pallino {
+  top: -2px;
+  right: auto;
+  left: 50%;
+  margin-left: 4px;
+}
+
 .notificaItem {
   padding: 12px 16px;
   border-bottom: 1px solid rgb(0 0 0 / 0.08);
