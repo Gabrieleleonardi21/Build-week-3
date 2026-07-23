@@ -12,6 +12,7 @@ import PublicOnly from "@/features/auth/PublicOnly";
 const Landing = lazy(() => import("@/pages/Landing"));
 const SignUp = lazy(() => import("@/pages/SignUp"));
 const Login = lazy(() => import("@/pages/Login"));
+const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const Home = lazy(() => import("@/pages/Home"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const Jobs = lazy(() => import("@/pages/Jobs"));
@@ -35,6 +36,7 @@ function App() {
           {/* Login riservato ai non autenticati: se sei loggato vai a /home */}
           <Route element={<PublicOnly />}>
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
 
           {/* Pagine protette: richiedono il login */}
