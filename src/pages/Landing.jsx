@@ -9,7 +9,7 @@ const Landing = () => {
   return (
     <div className="min-vh-100 d-flex flex-column">
       <div
-        className="d-flex justify-content-between align-items-center px-5 py-3 mx-auto w-100"
+        className="d-flex justify-content-between align-items-center px-3 px-md-5 py-3 mx-auto w-100"
         style={{ maxWidth: "1200px" }}
       >
         <img
@@ -18,8 +18,8 @@ const Landing = () => {
           className="logo-esteso"
         />
 
-        {/* Voci della nav: per ora puntano tutte al feed (/home) */}
-        <nav className="d-flex align-items-center gap-4">
+        {/* Voci della nav: per ora puntano tutte al feed (/home) — nascoste sotto i 768px */}
+        <nav className="d-none d-md-flex align-items-center gap-4">
           <Link
             to="/home"
             className="d-flex flex-column align-items-center text-decoration-none text-body"
@@ -57,7 +57,7 @@ const Landing = () => {
           </Link>
         </nav>
 
-        <div className="vr" style={{ height: "32px" }}></div>
+        <div className="vr d-none d-md-block" style={{ height: "32px" }}></div>
 
         <div className="d-flex gap-2">
           <Link
@@ -76,14 +76,16 @@ const Landing = () => {
       </div>
 
       <section
-        className="d-flex align-items-center px-5 py-5 mx-auto flex-grow-1 w-100"
+        className="landing-hero d-flex flex-column flex-md-row align-items-md-center px-3 px-md-5 py-4 py-md-5 mx-auto flex-grow-1 w-100"
         style={{ maxWidth: "1200px" }}
       >
-        <div className="w-50" style={{ maxWidth: "500px" }}>
-          <h1 className="display-5 fw-normal mb-4">
+        <div className="landing-text w-50" style={{ maxWidth: "500px" }}>
+          <h1 className="hero-title display-5 fw-normal mb-4">
             Welcome to your professional community
           </h1>
 
+          {/* Blocco azioni: sotto i 768px va dopo il titolo e la foto */}
+          <div className="hero-actions">
           {/* Accesso rapido con Google (login reale via popup Firebase) */}
           <button
             type="button"
@@ -131,9 +133,10 @@ const Landing = () => {
               Join now
             </Link>
           </p>
+          </div>
         </div>
 
-        <div className="w-50">
+        <div className="landing-image w-50">
           <img
             src="/background image register.svg"
             alt="Illustrazione LinkedIn"
