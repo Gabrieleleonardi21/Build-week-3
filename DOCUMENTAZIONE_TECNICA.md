@@ -756,10 +756,19 @@ con **eventi custom sul `window`** invece che con props o context.
 
 - `notificheData.js` — notifiche iniziali, `EVENTO_NOTIFICA` (`"nuovaNotifica"`),
   `inviaNotifica()` (che fa `dispatchEvent` di una `CustomEvent`) e
-  `avviaSimulazioneNotifiche()`, che ne programma l'arrivo a intervalli casuali.
+  `avviaSimulazioneNotifiche()`, che ne programma l'arrivo con `setTimeout`
+  ricorsivi. La cadenza è **progressiva** (`prossimaAttesa`): all'inizio l'attesa è
+  estratta tra 5 e 25 secondi, ma quando due estrazioni cadono nella fascia veloce
+  (5–10s) quella fascia viene **esclusa per il resto della sessione** e le notifiche
+  successive arrivano ogni 10–25 secondi. Così le prime si vedono subito, senza poi
+  risultare martellanti. Il flag di modulo `simulazioneAvviata` garantisce che la
+  simulazione parta **una sola volta**, anche se l'hook viene montato da più
+  componenti.
 - `useNotifiche()` — hook che ascolta l'evento, antepone la nuova notifica all'elenco
   e incrementa il contatore delle **non viste**; `segnaComeViste()` lo azzera. Il
-  listener è registrato in un `useEffect` con cleanup.
+  listener è registrato in un `useEffect` con cleanup. È montato in **due punti**
+  (`Icon` nell'header e `FooterNav` nella barra in basso): ognuno ha il proprio stato,
+  ma essendo in ascolto dello stesso evento restano allineati.
 - `NotificheToast.jsx` / `NotificaItem.jsx` — i toast in basso a destra (montati nel
   `Layout`) e la singola riga, riusata anche nel dropdown.
 - `layout/DropdownNotifiche.jsx` — il menu a tendina delle notifiche, **responsive**:
