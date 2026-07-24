@@ -301,3 +301,35 @@
     display: none;
   }
 }
+
+/* Landing responsive: sotto i 768px impila tutto su una colonna (col-12)
+   nell'ordine titolo -> foto -> bottoni -> resto */
+@media (max-width: 767.98px) {
+  /* il wrapper del testo "sparisce" cosi titolo e azioni diventano
+     figli diretti della section e possono essere riordinati con la foto */
+  .landing-text {
+    display: contents;
+  }
+
+  .hero-title {
+    order: 1;
+    width: 100%;
+  }
+
+  .landing-image {
+    order: 2;
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-actions {
+    order: 3;
+    width: 100%;
+  }
+
+  /* foto rettangolare a tutta larghezza */
+  .landing-image img {
+    width: 100%;
+    border-radius: 0;
+  }
+}
