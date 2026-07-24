@@ -68,9 +68,31 @@ export function inviaNotifica(notifica) {
   return completa;
 }
 
-const ATTESA_MIN = 10000;
+const VELOCE_MIN = 5000;
+const VELOCE_MAX = 10000;
 const ATTESA_MAX = 25000;
+const SOGLIA_OCCORRENZE_VELOCI = 2;
 let simulazioneAvviata = false;
+let occorrenzeVeloci = 0;
+// una volta true resta true per tutta la sessione: nessun reset
+let rangeVeloceEscluso = false;
+
+function prossimaAttesa() {
+  // finche' il range veloce non e' escluso il pool e' 5-25s, altrimenti 10-25s
+  const min = rangeVeloceEscluso ? VELOCE_MAX : VELOCE_MIN;
+  const attesa = casuale(min, ATTESA_MAX);
+
+  // conta le occorrenze (anche non consecutive) nel sotto-range 5-10s
+  // e dopo la seconda esclude quel range per sempre
+  if (!rangeVeloceEscluso && attesa <= VELOCE_MAX) {
+    occorrenzeVeloci += 1;
+    if (occorrenzeVeloci >= SOGLIA_OCCORRENZE_VELOCI) {
+      rangeVeloceEscluso = true;
+    }
+  }
+
+  return attesa;
+}
 
 export function avviaSimulazioneNotifiche() {
   if (simulazioneAvviata) return;
@@ -82,7 +104,7 @@ export function avviaSimulazioneNotifiche() {
       inviaNotifica(FINTE[indice % FINTE.length]);
       indice += 1;
       prossima();
-    }, casuale(ATTESA_MIN, ATTESA_MAX));
+    }, prossimaAttesa());
   };
   prossima();
 }
